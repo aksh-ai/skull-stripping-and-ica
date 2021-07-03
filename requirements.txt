@@ -1,0 +1,5 @@
+nibabel==3.2.1
+nipype==1.6.1
+nilearn==0.8.0
+itk 
+itkwidgets
