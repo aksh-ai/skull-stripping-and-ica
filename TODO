@@ -1,6 +1,6 @@
-1) CSV - Brain, Mask, Skull, H, W, D, C # nibabel
-2) Preprocessing - Intensity Norm, Bias Field Correction, Noise Removal # nipype
-3) 3D based Image Segmentation # pytorch
-4) Validation with test data -> Careful Preprocessing 
-5) Script, Socket based Flask/Flask
-6) ICA # Nilearn CanICA
+1) CSV - Brain, Mask, Skull, H, W, D, C # nibabel                                           - Done
+2) Preprocessing - Intensity Norm, Bias Field Correction, Noise Removal # nipype            -
+3) 3D based Image Segmentation # pytorch                                                    - 
+4) Validation with test data -> Careful Preprocessing                                       - 
+5) Script, Socket based Flask/Flask                                                         - Before Friday
+6) ICA # Nilearn CanICA                                                                     - Before 13th
