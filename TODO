@@ -4,3 +4,9 @@
 4) Validation with test data -> Careful Preprocessing                                       - 
 5) Script, Socket based Flask/Flask                                                         - Before Friday
 6) ICA # Nilearn CanICA                                                                     - Before 13th
+
+
+# Preprocessing
+    bias field correction
+    histogram equalization
+    intensity normalization
