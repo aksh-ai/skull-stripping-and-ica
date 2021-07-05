@@ -6,3 +6,8 @@ Task for ML Neuroscience Engineer Recruitment.pdf
 T1Img
 ML Neuroscience Task - Helper Data.zip
 NFBS_BEaST_Library.tar
+bc.py
+*.tar
+*.tar.gz
+*.nii.gz
+__pycache__
