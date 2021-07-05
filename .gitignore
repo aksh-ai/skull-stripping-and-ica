@@ -11,3 +11,5 @@ bc.py
 *.tar.gz
 *.nii.gz
 __pycache__
+.ipynb_checkpoints
+/*.png
