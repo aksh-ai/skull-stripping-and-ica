@@ -72,17 +72,17 @@ def train_histograms(images_path: str = 'data/images', landmarks_path: str = 'NF
 def get_train_transforms(histogram_landmarks='NFBS_histogram_landmarks.npy'):
     return tio.Compose([
         tio.ToCanonical(),
-        tio.Resample(4),
-        tio.CropOrPad((48, 60, 48)),
-        tio.RandomMotion(p=0.2),
+        tio.Resample(1),
+        # tio.CropOrPad((128, 128, 128)),
+        tio.RandomMotion(p=0.3),
         tio.HistogramStandardization({'mri': np.load(histogram_landmarks)}),
         tio.RandomBiasField(p=0.3),
         tio.ZNormalization(masking_method=tio.ZNormalization.mean),
-        tio.RandomNoise(p=0.5),
+        tio.RandomNoise(p=0.49),
         tio.RandomFlip(),
         tio.OneOf({
-            tio.RandomAffine(): 0.8,
-            tio.RandomElasticDeformation(): 0.2,
+            tio.RandomAffine(): 0.6,
+            tio.RandomElasticDeformation(): 0.4,
         }),
         tio.OneHot(),
     ])
@@ -90,8 +90,8 @@ def get_train_transforms(histogram_landmarks='NFBS_histogram_landmarks.npy'):
 def get_validation_transforms(histogram_landmarks='NFBS_histogram_landmarks.npy'):
     return tio.Compose([
         tio.ToCanonical(),
-        tio.Resample(4),
-        tio.CropOrPad((48, 60, 48)),
+        tio.Resample(1),
+        # tio.CropOrPad((128, 128, 128)),
         tio.HistogramStandardization({'mri': np.load(histogram_landmarks)}),
         tio.ZNormalization(masking_method=tio.ZNormalization.mean),
         tio.OneHot(),
