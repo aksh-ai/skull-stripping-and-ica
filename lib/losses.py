@@ -48,20 +48,17 @@ class GANLoss:
     def gen_loss(self, real_samps, fake_samps):
         raise NotImplementedError("gen_loss method has not been implemented")
 
-class StandardGAN(GANLoss):
+class StandardGANLoss(GANLoss):
     def __init__(self, dis):
         from torch.nn import BCEWithLogitsLoss
 
         super().__init__(dis)
 
-        # define the criterion and activation used for object
         self.criterion = BCEWithLogitsLoss()
 
     def dis_loss(self, real_samps, fake_samps):
-        # small assertion:
         assert real_samps.device == fake_samps.device, "Real and Fake samples are not on the same device"
 
-        # device for computations:
         device = fake_samps.device
 
         # predictions for real images and fake images separately :
@@ -86,7 +83,7 @@ class StandardGAN(GANLoss):
         return self.criterion(th.squeeze(preds),
                               th.ones(fake_samps.shape[0]).to(fake_samps.device))
 
-class WGAN_GP(GANLoss):
+class WGAN_GP_Loss(GANLoss):
 
     def __init__(self, dis, drift=0.001, use_gp=False):
         super().__init__(dis)
@@ -139,7 +136,7 @@ class WGAN_GP(GANLoss):
 
         return loss
 
-class LSGAN(GANLoss):
+class LSGAN_Loss(GANLoss):
     def __init__(self, dis):
         super().__init__(dis)
 
@@ -150,7 +147,7 @@ class LSGAN(GANLoss):
     def gen_loss(self, _, fake_samps):
         return 0.5 * ((th.mean(self.dis(fake_samps)) - 1) ** 2)
 
-class LSGAN_SIGMOID(GANLoss):
+class LSGAN_SIGMOID_Loss(GANLoss):
     def __init__(self, dis):
         super().__init__(dis)
 
@@ -165,7 +162,7 @@ class LSGAN_SIGMOID(GANLoss):
         scores = th.mean(sigmoid(self.dis(fake_samps)))
         return 0.5 * ((scores - 1) ** 2)
 
-class HingeGAN(GANLoss):
+class HingeGANLoss(GANLoss):
     def __init__(self, dis):
         super().__init__(dis)
 
@@ -181,7 +178,7 @@ class HingeGAN(GANLoss):
     def gen_loss(self, _, fake_samps):
         return -th.mean(self.dis(fake_samps))
 
-class RelativisticAverageHingeGAN(GANLoss):
+class RelativisticAverageHingeGANLoss(GANLoss):
     def __init__(self, dis):
         super().__init__(dis)
 
