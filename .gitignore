@@ -13,3 +13,5 @@ bc.py
 __pycache__
 .ipynb_checkpoints
 /*.png
+data
+data.zip
