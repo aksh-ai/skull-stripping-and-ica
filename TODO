@@ -5,9 +5,11 @@
 5) Script, Socket based Flask/Flask                                                         - Before Friday
 6) ICA # Nilearn CanICA                                                                     - Before 13th
 
-# Preprocessing
-    bias field correction
-    histogram equalization 0 - 255
-    intensity normalization -> Z Score, KDE, GMM
+# Datapipeline
+    TIO                                                                   Done
+    X, y => tio.SubjectDataset => patch based set uisng TIO Queues        Done
+    DataLoaders
 
-# Augmentation
+# Utils
+    histogram plotting
+    training and validation transforms
