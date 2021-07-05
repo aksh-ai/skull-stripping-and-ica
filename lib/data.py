@@ -23,8 +23,8 @@ def get_datasets(images,
                 test_size=0.1, 
                 random_state=51, 
                 volume="whole", 
-                patch_size=32,
-                samples_per_volume=32,
+                patch_size=128,
+                samples_per_volume=128,
                 max_queue_length=128,
                 num_workers=multiprocessing.cpu_count()):
     dataset = get_dataset_from_path(images, labels)
@@ -44,9 +44,11 @@ def get_datasets(images,
     print(f'Validation set: {len(validation_set)} Images')
 
     if volume.lower() == 'whole':
+        print("Whole images generated")
         return training_set, validation_set
     
     elif volume.lower() in ['patch', 'patches']:
+        print("Patches generated")
         sampler = tio.data.UniformSampler(patch_size)
         
         training_patches = tio.Queue(
