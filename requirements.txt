@@ -3,4 +3,5 @@ nipype==1.6.1
 nilearn==0.8.0
 itk 
 itkwidgets
-intensity-normalization
+torchio
+pathlib
