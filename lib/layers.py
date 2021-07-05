@@ -27,7 +27,7 @@ class ResidualBlock(nn.Module):
         return res + x
 
 class Upscale(nn.Module):
-    def __init__(self, in_channels, out_channels, kernel_size=(1, 1, 1), stride=2, padding=0):
+    def __init__(self, in_channels, out_channels, kernel_size=(2, 2, 2), stride=2, padding=1):
         super(Upscale, self).__init__()
 
         self.up = nn.ConvTranspose3d(in_channels, out_channels, kernel_size, stride, padding)

@@ -38,6 +38,23 @@ class VAELoss(Module):
 
         return kl_divergence * self.h2 + loss_val * self.h1
 
+class DiceLoss(nn.Module):
+    def init(self):
+        super(DiceLoss, self).init()
+    
+    def forward(self,pred, target):
+       smooth = 1.0
+       
+       iflat = pred.contiguous().view(-1)
+       tflat = target.contiguous().view(-1)
+       
+       intersection = (iflat * tflat).sum()
+       
+       A_sum = th.sum(iflat * iflat)
+       B_sum = th.sum(tflat * tflat)
+       
+       return 1 - ((2. * intersection + smooth) / (A_sum + B_sum + smooth) )
+
 class GANLoss:
     def __init__(self, dis):
         self.dis = dis
