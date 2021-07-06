@@ -8,12 +8,12 @@ out = model(inp)
 
 print(out.shape)
 
-# model = DenseNet(add_top=True).to('cuda')
-# out = model(inp)
+# # model = DenseNet(add_top=True).to('cuda')
+# # out = model(inp)
 
-# print(out)
-# up = th.nn.Upsample(scale_factor=2, mode='trilinear', align_corners=True)
-# print(up(inp).shape)
+# # print(out)
+# # up = th.nn.Upsample(scale_factor=2, mode='trilinear', align_corners=True)
+# # print(up(inp).shape)
 
-# up = th.nn.ConvTranspose3d(1, 1, kernel_size=2, stride=2)
-# print(up(inp).shape)
+# # up = th.nn.ConvTranspose3d(1, 1, kernel_size=2, stride=2)
+# # print(up(inp).shape)

@@ -1,10 +1,7 @@
 import torch as th
 from torch.nn import Module
 
-def MSE(y_pred, y_true):
-    return th.sum(th.sqrt(y_pred * y_pred - y_true * y_true))
-
-class DiceLoss(nn.Module):
+class DiceLoss(Module):
     def init(self):
         super(DiceLoss, self).init()
     
@@ -18,6 +15,36 @@ class DiceLoss(nn.Module):
        B_sum = th.sum(y_true * y_true)
        
        return 1 - ((2. * intersection + smooth) / (A_sum + B_sum + smooth))
+
+class StandardSegmentationLoss(Module):
+    def __init__(self, loss_type="L1", num_classes=1):
+        from torch.nn import L1Loss, SmoothL1Loss, BCELoss, BCEWithLogitsLoss, MSELoss
+
+        if loss_type == 'L1':
+            self.loss = L1Loss() 
+        elif loss == 'smooth_L1':
+            self.loss = SmoothL1Loss()
+        elif loss == 'MSE':
+            self.loss = MSELoss()
+        elif loss == 'BCE':
+            self.loss = BCELoss()
+        elif loss == 'BCE_logits':
+            self.loss = BCEWithLogitsLoss()
+        else:
+            raise Exception("Invalid Loss function defined.")
+
+        self.num_classes = num_classes
+    
+    def forward(self, y_pred, y_true):
+        assert y_pred.shape[0] == y_true.shape[0], "Tensors are of different batch sizes"
+        assert y_pred.size() == y_true.size(), "Tensors don't have the same shape"
+
+        y_true = y_true.reshape(-1, self.num_classes)
+        y_pred = y_pred.reshape(-1, self.num_classes)
+
+        loss = self.loss(y_pred, y_true)
+
+        return loss
 
 class VAELoss(Module):
     def __init__(self, mu=None, log_var=None, loss_type="L1", h1=0.1, h2=0.1):

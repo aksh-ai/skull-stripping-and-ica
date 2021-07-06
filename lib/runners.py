@@ -19,6 +19,8 @@ def train(train_loader, valid_loader, model, optimizer, criterion, epochs, devic
 
         e_start = time.time()
 
+        tt, tv = [], []
+
         for b, batch in enumerate(train_loader):
             X_train, y_train = batch['mri'][tio.DATA].data.to(device), batch['brain'][tio.DATA][:, 1:, ...].data.to(device)
 
@@ -28,20 +30,24 @@ def train(train_loader, valid_loader, model, optimizer, criterion, epochs, devic
             print(y_pred.shape)
             print(y_train.shape)
 
-            loss = criterion(y_pred.reshape(-1, 1), y_train.reshape(-1, 1))
+            loss = criterion(y_pred, y_train)
+
+            tt.append(loss.item())
+
             loss.backward()
 
             optimizer.step()
             if scheduler != None: scheduler.step()
 
-            if train_data_len % (b + 1) == 0 or (b + 1) == train_data_len:
-                print(f"Batch [{b}/{train_data_len}] | Loss: {loss.item():.6f}")
+            if train_data_len % verbose or (b + 1) == 1 or (b + 1) == train_data_len:
+                print(f"Batch [{b}/{train_data_len}] | Loss: {tt[-1]:.6f}")
 
                 if experiment:
-                    experiment.add_scalar('training_loss_in_steps', loss.item(), epoch * train_data_len + b)
+                    experiment.add_scalar('training_loss_in_steps', tt[-1], epoch * train_data_len + b)
 
-        train_loss.append(loss.item())
-        experiment.add_scalar('training_loss_per_epoch', train_loss[-1], epoch * train_data_len + b)
+        train_loss.append(th.mean(th.tensor(tt)))
+        if experiment:
+            experiment.add_scalar('training_loss_per_epoch', train_loss[-1], epoch * train_data_len + b)
         
         model.eval()
 
@@ -50,14 +56,21 @@ def train(train_loader, valid_loader, model, optimizer, criterion, epochs, devic
 
             y_pred = model(X_test)
 
-            loss = criterion(y_pred.reshape(-1, 1), y_train.reshape(-1, 1))
+            loss = criterion(y_pred, y_train)
 
-            if train_data_len % (b + 1) == 0 or (b + 1) == train_data_len:
-                print(f"Batch [{b}/{train_data_len}] | Loss: {loss.item():.6f}")
+            tv.append(th.mean(th.tensor(tv)))
+
+            if valid_data_len % verbose or (b + 1) == 1 or (b + 1) == valid_data_len:
+                print(f"Batch [{b}/{valid_data_len}] | Loss: {tv[-1]:.6f}")
 
                 if experiment:
-                    experiment.add_scalar('testing_loss_in_steps', loss.item(), epoch * valid_data_len + b)
-                    
+                    experiment.add_scalar('validation_loss_in_steps', tv[-1], epoch * valid_data_len + b)
+        
+        test_loss.append(test_loss)
+        
+        if experiment:
+            experiment.add_scalar('validation_loss_per_epoch', test_loss[-1], epoch * valid_data_len + b)
+        
         print(f"Epoch {epoch} - Duration {(time.time() - e_start)/60}:.2f minutes")
 
     return train_loss, test_loss
