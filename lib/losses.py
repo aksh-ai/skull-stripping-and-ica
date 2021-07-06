@@ -18,18 +18,20 @@ class DiceLoss(Module):
 
 class StandardSegmentationLoss(Module):
     def __init__(self, loss_type="L1", num_classes=1):
+        super(StandardSegmentationLoss, self).__init__()
+        
         from torch.nn import L1Loss, SmoothL1Loss, BCELoss, BCEWithLogitsLoss, MSELoss
 
         if loss_type == 'L1':
-            self.loss = L1Loss() 
-        elif loss == 'smooth_L1':
-            self.loss = SmoothL1Loss()
-        elif loss == 'MSE':
-            self.loss = MSELoss()
-        elif loss == 'BCE':
-            self.loss = BCELoss()
-        elif loss == 'BCE_logits':
-            self.loss = BCEWithLogitsLoss()
+            self.criterion = L1Loss() 
+        elif loss_type == 'smooth_L1':
+            self.criterion = SmoothL1Loss()
+        elif loss_type == 'MSE':
+            self.criterion = MSELoss()
+        elif loss_type == 'BCE':
+            self.criterion = BCELoss()
+        elif loss_type == 'BCE_logits':
+            self.criterion = BCEWithLogitsLoss()
         else:
             raise Exception("Invalid Loss function defined.")
 
@@ -42,7 +44,7 @@ class StandardSegmentationLoss(Module):
         y_true = y_true.reshape(-1, self.num_classes)
         y_pred = y_pred.reshape(-1, self.num_classes)
 
-        loss = self.loss(y_pred, y_true)
+        loss = self.criterion(y_pred, y_true)
 
         return loss
 

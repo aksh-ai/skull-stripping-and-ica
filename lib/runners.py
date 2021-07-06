@@ -27,8 +27,6 @@ def train(train_loader, valid_loader, model, optimizer, criterion, epochs, devic
             optimizer.zero_grad()
 
             y_pred = model(X_train)
-            print(y_pred.shape)
-            print(y_train.shape)
 
             loss = criterion(y_pred, y_train)
 
@@ -40,7 +38,7 @@ def train(train_loader, valid_loader, model, optimizer, criterion, epochs, devic
             if scheduler != None: scheduler.step()
 
             if train_data_len % verbose or (b + 1) == 1 or (b + 1) == train_data_len:
-                print(f"Batch [{b}/{train_data_len}] | Loss: {tt[-1]:.6f}")
+                print(f"Batch [{b+1}/{train_data_len}] | Loss: {tt[-1]:.6f}")
 
                 if experiment:
                     experiment.add_scalar('training_loss_in_steps', tt[-1], epoch * train_data_len + b)
@@ -61,7 +59,7 @@ def train(train_loader, valid_loader, model, optimizer, criterion, epochs, devic
             tv.append(loss.item())
 
             if valid_data_len % verbose or (b + 1) == 1 or (b + 1) == valid_data_len:
-                print(f"Batch [{b}/{valid_data_len}] | Loss: {tv[-1]:.6f}")
+                print(f"Batch [{b+1}/{valid_data_len}] | Loss: {tv[-1]:.6f}")
 
                 if experiment:
                     experiment.add_scalar('validation_loss_in_steps', tv[-1], epoch * valid_data_len + b)
