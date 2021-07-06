@@ -4,7 +4,7 @@ import torch as th
 from tqdm import tqdm
 from lib.utils import *
 
-def train(train_loader, valid_loader, model, optimizer, criterion, epochs, device, scheduler=None, experiment=None, checkpoint=True, verbose=1, model_path='models/residual_unet.pth'):
+def train(train_loader, valid_loader, model, optimizer, criterion, epochs, device, scheduler=None, experiment=None, checkpoint=True, verbose=320, model_path='models/residual_unet.pth'):
     model.train()
 
     train_loss, test_loss = [], []
