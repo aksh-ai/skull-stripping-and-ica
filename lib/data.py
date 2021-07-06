@@ -83,3 +83,7 @@ def load_datasets(
     print(f'Validation set: {len(validation_set)} Images')
     
     return training_set, validation_set
+
+def generate_patches():
+    pass
+

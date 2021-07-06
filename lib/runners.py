@@ -57,7 +57,5 @@ def train(train_loader, valid_loader, model, optimizer, criterion, epochs, devic
                     experiment.add_scalar('testing_loss_in_steps', loss.item(), epoch * valid_data_len + b)
                     
         print(f"Epoch {epoch} - Duration {(time.time() - e_start)/60}:.2f minutes")
-        
 
-
-
+    return train_loss, test_loss
