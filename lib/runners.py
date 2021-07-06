@@ -20,20 +20,22 @@ def train(train_loader, valid_loader, model, optimizer, criterion, epochs, devic
         e_start = time.time()
 
         for b, batch in enumerate(train_loader):
-            X_train, y_train = batch.mri.data.to(device), batch.brain.data.to(device)
+            X_train, y_train = batch['mri'][tio.DATA].data.to(device), batch['brain'][tio.DATA][:, 1:, ...].data.to(device)
 
             optimizer.zero_grad()
 
             y_pred = model(X_train)
+            print(y_pred.shape)
+            print(y_train.shape)
 
-            loss = criterion(y_pred, y_train)
+            loss = criterion(y_pred.reshape(-1, 1), y_train.reshape(-1, 1))
             loss.backward()
 
             optimizer.step()
             if scheduler != None: scheduler.step()
 
-            if train_data_len % b == 0 or b == train_data_len:
-                print(f"Batch [{b}/{train_data_len}] | Dice Loss: {loss.item():.6f}")
+            if train_data_len % (b + 1) == 0 or (b + 1) == train_data_len:
+                print(f"Batch [{b}/{train_data_len}] | Loss: {loss.item():.6f}")
 
                 if experiment:
                     experiment.add_scalar('training_loss_in_steps', loss.item(), epoch * train_data_len + b)
@@ -44,14 +46,14 @@ def train(train_loader, valid_loader, model, optimizer, criterion, epochs, devic
         model.eval()
 
         for b, batch in enumerate(valid_loader):
-            X_test, y_test = batch.mri.data.to(device), batch.brain.data.to(device)
+            X_test, y_test = batch['mri'][tio.DATA].data.to(device), batch['brain'][tio.DATA][:, 1:, ...].data.to(device)
 
             y_pred = model(X_test)
 
-            loss = criterion(y_pred, y_test)
+            loss = criterion(y_pred.reshape(-1, 1), y_train.reshape(-1, 1))
 
-            if train_data_len % b == 0 or b == train_data_len:
-                print(f"Batch [{b}/{train_data_len}] | Dice Loss: {loss.item():.6f}")
+            if train_data_len % (b + 1) == 0 or (b + 1) == train_data_len:
+                print(f"Batch [{b}/{train_data_len}] | Loss: {loss.item():.6f}")
 
                 if experiment:
                     experiment.add_scalar('testing_loss_in_steps', loss.item(), epoch * valid_data_len + b)

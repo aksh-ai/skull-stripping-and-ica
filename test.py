@@ -1,12 +1,12 @@
 import torch as th
 from lib.models import *
 
-inp = th.rand(1, 1, 128, 128, 128)
+inp = th.rand(2, 1, 64, 64, 64)
 
 model = ResidualUNET3D()
 out = model(inp)
 
-print(out)
+print(out.shape)
 
 # model = DenseNet(add_top=True).to('cuda')
 # out = model(inp)
