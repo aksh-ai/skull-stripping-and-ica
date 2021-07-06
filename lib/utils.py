@@ -43,19 +43,24 @@ def plot_histogram(axis, tensor, num_positions=100, label=None, alpha=0.05, colo
         kwargs['label'] = label
     axis.plot(positions, histogram, **kwargs)
 
-def get_histogram_plot(dataset, use_histogram=False, landmarks_path='NFBS_histogram_landmarks.npy'):
+def get_histogram_plot(dataset, use_histogram_landmarks=False, landmarks_path='NFBS_histogram_landmarks.npy'):
     fig, ax = plt.subplots(dpi=100)
     
-    if use_histogram: histogram_transform = tio.HistogramStandardization({'mri': np.load(landmarks_path)})
+    title= 'Histograms of samples in the dataset'
     
+    if use_histogram_landmarks: 
+        histogram_transform = tio.HistogramStandardization({'mri': np.load(landmarks_path)})
+        title = 'Histogram Corrected samples of the dataset'
+        
     for sample in tqdm(dataset):
-        tensor = sample.mri.data
-        if use_histogram: tensor = histogram_transform(tensor); plot_histogram(ax, tensor, color='green')
-        else: plot_histogram(ax, tensor, color='blue')
-    
+        if use_histogram_landmarks: 
+            tensor = histogram_transform(sample)    
+        
+        plot_histogram(ax, tensor.mri.data, color='blue')
+                    
     ax.set_xlim(-100, 2000)
     ax.set_ylim(0, 0.004)
-    ax.set_title('Histograms of the samples present in the dataset')
+    ax.set_title(title)
     ax.set_xlabel('Intensity')
     ax.grid()
 
@@ -127,6 +132,22 @@ class HistogramEqualize(object):
         image_equalized = np.interp(image.flatten(), bins[:-1], cdf)
 
         return image_equalized.reshape(image.shape)
+
+def dice_ratio(seg, gt):
+    seg = seg.flatten()
+    
+    seg[seg > 0.5] = 1
+    seg[seg <= 0.5] = 0
+
+    gt = gt.flatten()
+    gt[gt > 0.5] = 1
+    gt[gt <= 0.5] = 0
+
+    same = (seg * gt).sum()
+
+    dice = 2 * float(same) / float(gt.sum() + seg.sum())
+
+    return dice
 
 def apply_binary_mask(img: np.array or th.Tensor, mask: np.array or th.Tensor) -> np.array:
     if type(img) == th.Tensor and type(mask) == th.Tensor:
