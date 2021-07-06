@@ -58,7 +58,7 @@ def train(train_loader, valid_loader, model, optimizer, criterion, epochs, devic
 
             loss = criterion(y_pred, y_train)
 
-            tv.append(th.mean(th.tensor(tv)))
+            tv.append(loss.item())
 
             if valid_data_len % verbose or (b + 1) == 1 or (b + 1) == valid_data_len:
                 print(f"Batch [{b}/{valid_data_len}] | Loss: {tv[-1]:.6f}")
@@ -66,7 +66,7 @@ def train(train_loader, valid_loader, model, optimizer, criterion, epochs, devic
                 if experiment:
                     experiment.add_scalar('validation_loss_in_steps', tv[-1], epoch * valid_data_len + b)
         
-        test_loss.append(test_loss)
+        test_loss.append(th.mean(th.tensor(tv)))
         
         if experiment:
             experiment.add_scalar('validation_loss_per_epoch', test_loss[-1], epoch * valid_data_len + b)
