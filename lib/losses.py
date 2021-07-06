@@ -4,6 +4,21 @@ from torch.nn import Module
 def MSE(y_pred, y_true):
     return th.sum(th.sqrt(y_pred * y_pred - y_true * y_true))
 
+class DiceLoss(nn.Module):
+    def init(self):
+        super(DiceLoss, self).init()
+    
+    def forward(self, y_pred, y_true, smooth=1.0):       
+       y_pred = y_pred.contiguous().view(-1)
+       y_true = y_true.contiguous().view(-1)
+       
+       intersection = (y_pred * y_pred).sum()
+       
+       A_sum = th.sum(y_pred * y_pred)
+       B_sum = th.sum(y_true * y_true)
+       
+       return 1 - ((2. * intersection + smooth) / (A_sum + B_sum + smooth))
+
 class VAELoss(Module):
     def __init__(self, mu=None, log_var=None, loss_type="L1", h1=0.1, h2=0.1):
         self.mu = mu
@@ -37,23 +52,6 @@ class VAELoss(Module):
         kl_divergence = -0.5 * th.sum(1 + logvar - mu.pow(2) - logvar.exp())
 
         return kl_divergence * self.h2 + loss_val * self.h1
-
-class DiceLoss(nn.Module):
-    def init(self):
-        super(DiceLoss, self).init()
-    
-    def forward(self,pred, target):
-       smooth = 1.0
-       
-       iflat = pred.contiguous().view(-1)
-       tflat = target.contiguous().view(-1)
-       
-       intersection = (iflat * tflat).sum()
-       
-       A_sum = th.sum(iflat * iflat)
-       B_sum = th.sum(tflat * tflat)
-       
-       return 1 - ((2. * intersection + smooth) / (A_sum + B_sum + smooth) )
 
 class GANLoss:
     def __init__(self, dis):
@@ -101,7 +99,6 @@ class StandardGANLoss(GANLoss):
                               th.ones(fake_samps.shape[0]).to(fake_samps.device))
 
 class WGAN_GP_Loss(GANLoss):
-
     def __init__(self, dis, drift=0.001, use_gp=False):
         super().__init__(dis)
         self.drift = drift
