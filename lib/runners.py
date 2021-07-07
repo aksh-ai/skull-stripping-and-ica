@@ -24,7 +24,7 @@ def train(train_loader, valid_loader, model, optimizer, criterion, epochs, devic
 
         for b, batch in enumerate(train_loader):
             X_train = batch['mri'][tio.DATA].data.to(device) / 255.0
-            y_train = batch['brain'][tio.DATA][:, 1:, ...].data.to(device) / 255.0
+            y_train = batch['brain'][tio.DATA].data.to(device) / 255.0
 
             optimizer.zero_grad()
 
@@ -39,7 +39,7 @@ def train(train_loader, valid_loader, model, optimizer, criterion, epochs, devic
             optimizer.step()
             if scheduler != None: scheduler.step()
 
-            if train_data_len % verbose or (b + 1) == 1 or (b + 1) == train_data_len:
+            if train_data_len % verbose == 0 or (b + 1) == 1 or (b + 1) == train_data_len:
                 print(f"Batch [{b+1}/{train_data_len}] | Loss: {tt[-1]:.6f}")
 
                 if experiment:
@@ -53,7 +53,7 @@ def train(train_loader, valid_loader, model, optimizer, criterion, epochs, devic
 
         for b, batch in enumerate(valid_loader):
             X_test= batch['mri'][tio.DATA].data.to(device) / 255.0
-            y_test = batch['brain'][tio.DATA][:, 1:, ...].data.to(device) / 255.0
+            y_test = batch['brain'][tio.DATA].data.to(device) / 255.0
 
             y_pred = model(X_test)
 
@@ -61,7 +61,7 @@ def train(train_loader, valid_loader, model, optimizer, criterion, epochs, devic
 
             tv.append(loss.item())
 
-            if valid_data_len % verbose or (b + 1) == 1 or (b + 1) == valid_data_len:
+            if valid_data_len % verbose == 0 or (b + 1) == 1 or (b + 1) == valid_data_len:
                 print(f"Batch [{b+1}/{valid_data_len}] | Loss: {tv[-1]:.6f}")
 
                 if experiment:

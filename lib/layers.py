@@ -41,8 +41,8 @@ class Upscale3D(nn.Module):
     def __init__(self, in_channels, out_channels):
         super().__init__()
 
-        # self.up = nn.ConvTranspose3d(in_channels, out_channels, kernel_size=2, stride=2)
-        self.up = nn.Upsample(scale_factor=2, mode='trilinear', align_corners=True)
+        self.up = nn.ConvTranspose3d(in_channels, out_channels, kernel_size=2, stride=2)
+        # self.up = nn.Upsample(scale_factor=2, mode='trilinear', align_corners=True)
         self.residual = ResidualBlock3D(in_channels + out_channels, out_channels)
 
         self.apply(initialize_weights)

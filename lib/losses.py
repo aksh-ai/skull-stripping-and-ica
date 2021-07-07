@@ -5,16 +5,14 @@ class DiceLoss(Module):
     def init(self):
         super(DiceLoss, self).init()
     
-    def forward(self, y_pred, y_true, smooth=1.0):       
-       y_pred = y_pred.contiguous().view(-1)
-       y_true = y_true.contiguous().view(-1)
-       
-       intersection = (y_pred * y_pred).sum()
-       
-       A_sum = th.sum(y_pred * y_pred)
-       B_sum = th.sum(y_true * y_true)
-       
-       return 1 - ((2. * intersection + smooth) / (A_sum + B_sum + smooth))
+    def forward(self, inputs, targets, smooth=1.0):       
+        inputs = inputs.view(-1)
+        targets = targets.view(-1)
+        
+        intersection = (inputs * targets).sum()                            
+        dice = (2. * intersection + smooth)/(inputs.sum() + targets.sum() + smooth)  
+        
+        return 1 - dice
 
 class StandardSegmentationLoss(Module):
     def __init__(self, loss_type="L1", num_classes=1):
@@ -41,8 +39,8 @@ class StandardSegmentationLoss(Module):
         assert y_pred.shape[0] == y_true.shape[0], "Tensors are of different batch sizes"
         assert y_pred.size() == y_true.size(), "Tensors don't have the same shape"
 
-        y_true = y_true.reshape(-1, self.num_classes)
-        y_pred = y_pred.reshape(-1, self.num_classes)
+        y_true = y_true.reshape(-1, 1)
+        y_pred = y_pred.reshape(-1, 1)
 
         loss = self.criterion(y_pred, y_true)
 

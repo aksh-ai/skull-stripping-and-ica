@@ -8,6 +8,15 @@ out = model(inp)
 
 print(out.shape)
 
+# pred = th.rand(4, 500).view(-1)
+# true = th.rand(4, 500).view(-1)
+
+# loss = th.nn.BCEWithLogitsLoss()
+
+# l = loss(pred, true)
+
+# print(l, l.shape)
+
 # # model = DenseNet(add_top=True).to('cuda')
 # # out = model(inp)
 
