@@ -16,7 +16,7 @@ def train(train_loader, valid_loader, model, optimizer, criterion, epochs, devic
     valid_data_len = len(valid_loader)
 
     for epoch in range(1, epochs+1):
-        print(f"Epoch {epoch}")
+        print(f"Epoch [{epoch}/{epochs}]")
 
         e_start = time.time()
 
@@ -58,7 +58,7 @@ def train(train_loader, valid_loader, model, optimizer, criterion, epochs, devic
 
             y_pred = model(X_test)
 
-            loss = criterion(y_pred, y_train)
+            loss = criterion(y_pred, y_test)
 
             tv.append(loss.item())
 
@@ -74,7 +74,7 @@ def train(train_loader, valid_loader, model, optimizer, criterion, epochs, devic
         if experiment:
             experiment.add_scalar('validation_loss_per_epoch', test_loss[-1], epoch * valid_data_len + b)
         
-        print(f"Epoch {epoch} - Duration {(time.time() - e_start)/60:.2f} minutes")
+        print(f"Epoch [{epoch}/{epochs}] - Duration {(time.time() - e_start)/60:.2f} minutes")
 
         if checkpoint:
             save_checkpoint({"epoch": epoch, "state_dict": model.state_dict(), "train_loss": train_loss[-1], "valid_loss": test_loss[-1]}, path=model_path + f"_{epoch}.pth")

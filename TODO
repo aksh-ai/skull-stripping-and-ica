@@ -31,7 +31,9 @@ custom transforms as argument in load_datasets                                  
 
 prepare inference data pipeline                                                             4
 runners - inference add & edit                                                              4
-mask applying                                                                               4
-flask rest api, inference script                                                            4
+test_set evaluation pipeline                                                                4
+flask rest api, inference script, training_script                                           4
 edit notebooks for training, evaluation - add explanation                                   0, 1, 5
 comment library and document                                                                6
+
+DMN using CanICA
