@@ -41,7 +41,7 @@ def train(train_loader, valid_loader, model, optimizer, criterion, epochs, devic
 
             if (b + 1) % verbose == 0 or (b + 1) == 1 or (b + 1) == train_data_len:
                 dice, iou = get_eval_metrics(y_pred=y_pred, y_true=y_train)
-                print(f"Batch [{b+1:6d}/{train_data_len}] | Loss: {tt[-1]:.6f} | Dice Coefficient: {dice.item():.6f} | Jaccard (IoU) Score: {iou.item():.6f}")
+                print(f"Train - Batch [{b+1:6d}/{train_data_len}] | Loss: {tt[-1]:.6f} | Dice Coefficient: {dice.item():.6f} | Jaccard (IoU) Score: {iou.item():.6f}")
 
                 if experiment:
                     experiment.add_scalar('training_loss_in_steps', tt[-1], epoch * train_data_len + b)
@@ -64,7 +64,7 @@ def train(train_loader, valid_loader, model, optimizer, criterion, epochs, devic
 
             if (b + 1) % verbose == 0 or (b + 1) == 1 or (b + 1) == valid_data_len:
                 dice, iou = get_eval_metrics(y_pred=y_pred, y_true=y_test)
-                print(f"Batch [{b+1:6d}/{valid_data_len}] | Loss: {tv[-1]:.6f} | Dice Coefficient: {dice.item():.6f} | Jaccard (IoU) Score: {iou.item():.6f}")
+                print(f"Validation - Batch [{b+1:6d}/{valid_data_len}] | Loss: {tv[-1]:.6f} | Dice Coefficient: {dice.item():.6f} | Jaccard (IoU) Score: {iou.item():.6f}")
 
                 if experiment:
                     experiment.add_scalar('validation_loss_in_steps', tv[-1], epoch * valid_data_len + b)
