@@ -14,6 +14,25 @@ class DiceLoss(Module):
         
         return 1 - dice
 
+class IoULoss(nn.Module):
+    def __init__(self):
+        super(IoULoss, self).__init__()
+
+    def forward(self, inputs, targets, smooth=1.0):
+        #flatten label and prediction tensors
+        inputs = inputs.view(-1)
+        targets = targets.view(-1)
+        
+        #intersection is equivalent to True Positive count
+        #union is the mutually inclusive area of all labels & predictions 
+        intersection = (inputs * targets).sum()
+        total = (inputs + targets).sum()
+        union = total - intersection 
+        
+        iou = (intersection + smooth)/(union + smooth)
+                
+        return 1 - iou
+
 class StandardSegmentationLoss(Module):
     def __init__(self, loss_type="L1", num_classes=1):
         super(StandardSegmentationLoss, self).__init__()
@@ -39,8 +58,8 @@ class StandardSegmentationLoss(Module):
         assert y_pred.shape[0] == y_true.shape[0], "Tensors are of different batch sizes"
         assert y_pred.size() == y_true.size(), "Tensors don't have the same shape"
 
-        y_true = y_true.reshape(-1, 1)
-        y_pred = y_pred.reshape(-1, 1)
+        y_true = y_true.reshape(-1, self.num_classes)
+        y_pred = y_pred.reshape(-1, self.num_classes)
 
         loss = self.criterion(y_pred, y_true)
 
@@ -176,48 +195,6 @@ class WGAN_GP_Loss(GANLoss):
         loss = -th.mean(self.dis(fake_samps))
 
         return loss
-
-class LSGAN_Loss(GANLoss):
-    def __init__(self, dis):
-        super().__init__(dis)
-
-    def dis_loss(self, real_samps, fake_samps):
-        return 0.5 * (((th.mean(self.dis(real_samps)) - 1) ** 2)
-                      + (th.mean(self.dis(fake_samps))) ** 2)
-
-    def gen_loss(self, _, fake_samps):
-        return 0.5 * ((th.mean(self.dis(fake_samps)) - 1) ** 2)
-
-class LSGAN_SIGMOID_Loss(GANLoss):
-    def __init__(self, dis):
-        super().__init__(dis)
-
-    def dis_loss(self, real_samps, fake_samps):
-        from torch.nn.functional import sigmoid
-        real_scores = th.mean(sigmoid(self.dis(real_samps)))
-        fake_scores = th.mean(sigmoid(self.dis(fake_samps)))
-        return 0.5 * (((real_scores - 1) ** 2) + (fake_scores ** 2))
-
-    def gen_loss(self, _, fake_samps):
-        from torch.nn.functional import sigmoid
-        scores = th.mean(sigmoid(self.dis(fake_samps)))
-        return 0.5 * ((scores - 1) ** 2)
-
-class HingeGANLoss(GANLoss):
-    def __init__(self, dis):
-        super().__init__(dis)
-
-    def dis_loss(self, real_samps, fake_samps):
-        r_preds, r_mus, r_sigmas = self.dis(real_samps)
-        f_preds, f_mus, f_sigmas = self.dis(fake_samps)
-
-        loss = (th.mean(th.nn.ReLU()(1 - r_preds)) +
-                th.mean(th.nn.ReLU()(1 + f_preds)))
-
-        return loss
-
-    def gen_loss(self, _, fake_samps):
-        return -th.mean(self.dis(fake_samps))
 
 class RelativisticAverageHingeGANLoss(GANLoss):
     def __init__(self, dis):

@@ -4,7 +4,7 @@ from lib.layers import *
 import torch.nn.functional as F
 
 class ResidualUNET3D(nn.Module):
-    def __init__(self, in_channels=1, out_channels=1, blocks=[64, 128, 256, 512], kernel_size=3, stride=2):
+    def __init__(self, in_channels=1, out_channels=2, blocks=[64, 128, 256, 512], kernel_size=3, stride=2):
         super().__init__()
 
         self.conv1_1 = nn.Conv3d(in_channels, blocks[0], kernel_size=kernel_size, stride=1, padding=1, bias=False)

@@ -10,6 +10,7 @@ from shutil import copyfile
 import matplotlib.pyplot as plt
 import torchvision.transforms as T
 import torchvision.transforms.functional as FT
+from torch.utils.tensorboard import SummaryWriter 
 from ipywidgets import interact, interactive, IntSlider, ToggleButtons
 
 def prepare_data(csv_path: str = None, out_dir: str = 'data') -> None:
@@ -66,6 +67,36 @@ def get_histogram_plot(dataset, use_histogram_landmarks=False, landmarks_path='N
 
     plt.show()
 
+def get_tensorboard(log_path="skull_stripping_logs"):
+    return SummaryWriter(log_path)
+
+def save_checkpoint(args_dict, path='models/skull_stripping_ckpt.pth'):
+    th.save(args_dict, path)
+
+def dice_coefficient(y_true, y_pred, smooth=1.0):
+    y_pred = y_pred.view(-1)
+    y_true = y_true.view(-1)
+    
+    intersection = (y_pred * y_true).sum()                            
+    dice = (2. * intersection + smooth)/(y_pred.sum() + y_true.sum() + smooth)  
+
+    return dice
+
+def jaccard_similarity(y_true, y_pred, smooth=1.0):
+    y_pred = y_pred.view(-1)
+    y_true = y_true.view(-1)
+    
+    intersection = (y_pred * y_true).sum()
+    total = (y_pred + y_true).sum()
+    union = total - intersection 
+    
+    iou = (intersection + smooth)/(union + smooth)
+
+    return iou
+
+def get_eval_metrics(y_true, y_pred):
+    return dice_coefficient(y_true, y_pred), jaccard_similarity(y_true, y_pred)
+
 def train_histograms(images_path: str = 'data/images', landmarks_path: str = 'NFBS_histogram_landmarks.npy'):
     landmarks = tio.HistogramStandardization.train(
                     images_path,
@@ -90,8 +121,7 @@ def get_train_transforms(histogram_landmarks='NFBS_histogram_landmarks.npy'):
         tio.OneOf({
             tio.RandomAffine(): 0.6,
             tio.RandomElasticDeformation(): 0.4,
-        }),
-        tio.OneHot(),
+        })
     ])
 
 def get_validation_transforms(histogram_landmarks='NFBS_histogram_landmarks.npy'):
@@ -102,8 +132,7 @@ def get_validation_transforms(histogram_landmarks='NFBS_histogram_landmarks.npy'
         # tio.Resample(4),
         # tio.CropOrPad((64, 64, 64)),
         tio.HistogramStandardization({'mri': np.load(histogram_landmarks)}),
-        tio.ZNormalization(masking_method=tio.ZNormalization.mean),
-        tio.OneHot(),
+        tio.ZNormalization(masking_method=tio.ZNormalization.mean)
     ])
 
 class IntensityNormalization(object):

@@ -5,7 +5,7 @@ import torch as th
 from tqdm import tqdm
 from lib.utils import *
 
-def train(train_loader, valid_loader, model, optimizer, criterion, epochs, device, scheduler=None, experiment=None, checkpoint=True, verbose=320, model_path='models/residual_unet.pth'):
+def train(train_loader, valid_loader, model, optimizer, criterion, epochs, device, scheduler=None, experiment=None, checkpoint=True, verbose=320, model_path='models/residual_unet'):
     model.train()
 
     train_loss, test_loss = [], []
@@ -39,8 +39,9 @@ def train(train_loader, valid_loader, model, optimizer, criterion, epochs, devic
             optimizer.step()
             if scheduler != None: scheduler.step()
 
-            if train_data_len % verbose == 0 or (b + 1) == 1 or (b + 1) == train_data_len:
-                print(f"Batch [{b+1}/{train_data_len}] | Loss: {tt[-1]:.6f}")
+            if (b + 1) % verbose == 0 or (b + 1) == 1 or (b + 1) == train_data_len:
+                dice, iou = get_eval_metrics(y_pred=y_pred, y_true=y_train)
+                print(f"Batch [{b+1}/{train_data_len}] | Loss: {tt[-1]:.6f} | Dice Coefficient: {dice.item():.6f} | Jaccard (IoU) Score: {iou.item():.6f}")
 
                 if experiment:
                     experiment.add_scalar('training_loss_in_steps', tt[-1], epoch * train_data_len + b)
@@ -61,8 +62,9 @@ def train(train_loader, valid_loader, model, optimizer, criterion, epochs, devic
 
             tv.append(loss.item())
 
-            if valid_data_len % verbose == 0 or (b + 1) == 1 or (b + 1) == valid_data_len:
-                print(f"Batch [{b+1}/{valid_data_len}] | Loss: {tv[-1]:.6f}")
+            if (b + 1) % verbose == 0 or (b + 1) == 1 or (b + 1) == valid_data_len:
+                dice, iou = get_eval_metrics(y_pred=y_pred, y_true=y_test)
+                print(f"Batch [{b+1}/{valid_data_len}] | Loss: {tv[-1]:.6f} | Dice Coefficient: {dice.item():.6f} | Jaccard (IoU) Score: {iou.item():.6f}")
 
                 if experiment:
                     experiment.add_scalar('validation_loss_in_steps', tv[-1], epoch * valid_data_len + b)
@@ -73,5 +75,8 @@ def train(train_loader, valid_loader, model, optimizer, criterion, epochs, devic
             experiment.add_scalar('validation_loss_per_epoch', test_loss[-1], epoch * valid_data_len + b)
         
         print(f"Epoch {epoch} - Duration {(time.time() - e_start)/60}:.2f minutes")
+
+        if checkpoint:
+            save_checkpoint({"epoch": epoch, "state_dict": model.state_dict(), "train_loss": train_loss[-1], "valid_loss": test_loss[-1]}, path=model_path + f"_{epoch}.pth")
 
     return train_loss, test_loss
