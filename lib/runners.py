@@ -1,5 +1,6 @@
 import os
 import time
+import torchio as tio
 import torch as th
 from tqdm import tqdm
 from lib.utils import *
@@ -22,7 +23,8 @@ def train(train_loader, valid_loader, model, optimizer, criterion, epochs, devic
         tt, tv = [], []
 
         for b, batch in enumerate(train_loader):
-            X_train, y_train = batch['mri'][tio.DATA].data.to(device), batch['brain'][tio.DATA][:, 1:, ...].data.to(device)
+            X_train = batch['mri'][tio.DATA].data.to(device) / 255.0
+            y_train = batch['brain'][tio.DATA][:, 1:, ...].data.to(device) / 255.0
 
             optimizer.zero_grad()
 
@@ -50,7 +52,8 @@ def train(train_loader, valid_loader, model, optimizer, criterion, epochs, devic
         model.eval()
 
         for b, batch in enumerate(valid_loader):
-            X_test, y_test = batch['mri'][tio.DATA].data.to(device), batch['brain'][tio.DATA][:, 1:, ...].data.to(device)
+            X_test= batch['mri'][tio.DATA].data.to(device) / 255.0
+            y_test = batch['brain'][tio.DATA][:, 1:, ...].data.to(device) / 255.0
 
             y_pred = model(X_test)
 
