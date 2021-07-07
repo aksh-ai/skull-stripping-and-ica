@@ -23,8 +23,8 @@ def train(train_loader, valid_loader, model, optimizer, criterion, epochs, devic
         tt, tv = [], []
 
         for b, batch in enumerate(train_loader):
-            X_train = batch['mri'][tio.DATA].data.to(device) / 255.0
-            y_train = batch['brain'][tio.DATA].data.to(device) / 255.0
+            X_train = batch['mri'][tio.DATA].data.to(device)
+            y_train = batch['brain'][tio.DATA].data.to(device)
 
             optimizer.zero_grad()
 
@@ -53,8 +53,8 @@ def train(train_loader, valid_loader, model, optimizer, criterion, epochs, devic
         model.eval()
 
         for b, batch in enumerate(valid_loader):
-            X_test= batch['mri'][tio.DATA].data.to(device) / 255.0
-            y_test = batch['brain'][tio.DATA].data.to(device) / 255.0
+            X_test= batch['mri'][tio.DATA].data.to(device)
+            y_test = batch['brain'][tio.DATA].data.to(device)
 
             y_pred = model(X_test)
 
@@ -74,9 +74,16 @@ def train(train_loader, valid_loader, model, optimizer, criterion, epochs, devic
         if experiment:
             experiment.add_scalar('validation_loss_per_epoch', test_loss[-1], epoch * valid_data_len + b)
         
-        print(f"Epoch {epoch} - Duration {(time.time() - e_start)/60}:.2f minutes")
+        print(f"Epoch {epoch} - Duration {(time.time() - e_start)/60:.2f} minutes")
 
         if checkpoint:
             save_checkpoint({"epoch": epoch, "state_dict": model.state_dict(), "train_loss": train_loss[-1], "valid_loss": test_loss[-1]}, path=model_path + f"_{epoch}.pth")
+
+    end_time = time.time() - overall_start    
+
+    # print training summary
+    print("\nTraining Duration {:.2f} minutes".format(end_time/60))
+    print("GPU memory used : {} kb".format(th.cuda.memory_allocated()))
+    print("GPU memory cached : {} kb".format(th.cuda.memory_cached()))
 
     return train_loss, test_loss
