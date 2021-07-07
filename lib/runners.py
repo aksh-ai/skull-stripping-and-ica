@@ -87,3 +87,26 @@ def train(train_loader, valid_loader, model, optimizer, criterion, epochs, devic
     print("GPU memory cached : {} kb".format(th.cuda.memory_cached()))
 
     return train_loss, test_loss
+
+def evaluate(test_loader, model, criterion, device):
+    model.eval()
+
+    test_loss, dice_score, iou_score = [], [], []
+
+    for b, batch in enumerate(test_loader):
+        X_test= batch['mri'][tio.DATA].data.to(device)
+        y_test = batch['brain'][tio.DATA].data.to(device)
+
+        y_pred = model(X_test)
+
+        loss = criterion(y_pred, y_test)
+        dice, iou = get_eval_metrics(y_pred=y_pred, y_true=y_test)
+
+        test_loss.append(loss.item())
+        dice_score.append(dice.item())
+        iou_score.append(iou.item())
+
+    return th.tensor(th.mean(test_loss)), th.tensor(th.mean(dice_loss)), th.tensor(th.mean(iou_score))
+
+def infer():
+    pass
