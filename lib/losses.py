@@ -14,7 +14,7 @@ class DiceLoss(Module):
         
         return 1 - dice
 
-class IoULoss(nn.Module):
+class IoULoss(Module):
     def __init__(self):
         super(IoULoss, self).__init__()
 

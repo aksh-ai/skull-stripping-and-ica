@@ -21,13 +21,14 @@
     flask rest api, inference script
     comment library and document
 
-library cleaning - imports, fucntion removal, dataparallel, cudnn backend                   1
+library cleaning - imports, function removal, dataparallel, cudnn backend                   1
 runners - train edit                                                                        2
 losses change - dice                                                                        3
 checkpointer util                                                                           0
 tensorboard util                                                                            0
 eval metrics util                                                                           0
 custom transforms as argument in load_datasets                                              4
+
 prepare inference data pipeline                                                             4
 runners - inference add & edit                                                              4
 mask applying                                                                               4
