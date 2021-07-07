@@ -22,7 +22,9 @@ def load_datasets(
     image_paths, 
     label_paths, 
     test_size=0.1, 
-    random_state=None, 
+    random_state=None,
+    train_transforms=None,
+    valid_transforms=None, 
     volume="whole", 
     patch_size=128,
     samples_per_volume=128,
@@ -44,7 +46,7 @@ def load_datasets(
         )
         training_set.append(subject) 
 
-    training_set = tio.SubjectsDataset(training_set, transform=get_train_transforms())
+    training_set = tio.SubjectsDataset(training_set, transform=get_train_transforms() if train_transforms is None else train_transforms)
 
     validation_set = []
     
@@ -55,7 +57,7 @@ def load_datasets(
         )
         validation_set.append(subject)
 
-    validation_set = tio.SubjectsDataset(validation_set, transform=get_validation_transforms())
+    validation_set = tio.SubjectsDataset(validation_set, transform=get_validation_transforms() if valid_transforms is None else valid_transforms)
 
     if volume.lower() in ['patch', 'patches']:
         sampler = tio.data.UniformSampler(patch_size)

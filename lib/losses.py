@@ -70,14 +70,14 @@ class VAELoss(Module):
         self.mu = mu
         self.log_var = log_var
 
-        from torch.nn import L1Loss, SmoothL1Loss, BCELoss, BCEWithLogitsLoss
+        from torch.nn import L1Loss, SmoothL1Loss, BCELoss, BCEWithLogitsLoss, MSELoss
 
         if loss_type == 'L1':
             self.loss = L1Loss() 
         elif loss == 'smooth_L1':
             self.loss = SmoothL1Loss()
         elif loss == 'MSE':
-            self.loss = MSE
+            self.loss = MSELoss()
         elif loss == 'BCE':
             self.loss = BCELoss()
         elif loss == 'BCE_logits':
