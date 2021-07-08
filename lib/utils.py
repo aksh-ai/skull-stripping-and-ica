@@ -13,6 +13,8 @@ import torchvision.transforms.functional as FT
 from torch.utils.tensorboard import SummaryWriter 
 from ipywidgets import interact, interactive, IntSlider, ToggleButtons
 
+plt.rcParams['axes.facecolor'] = 'black'
+
 def prepare_data(csv_path: str = None, out_dir: str = 'data') -> None:
     if os.path.exists(csv_path):
         out_dirs = [os.path.join(out_dir, sub_dir) for sub_dir in ['images', 'labels', 'targets']]
@@ -185,10 +187,11 @@ def dice_ratio(seg, gt):
 def apply_binary_mask(img: np.array or th.Tensor, mask: np.array or th.Tensor) -> np.array:
     if type(img) == th.Tensor and type(mask) == th.Tensor:
         img, mask = img.item(), mask.item()
-    
-    foreground = np.where(mask >= 0.5, img, mask)
-    background = (1 - mask) * foreground
-    return foreground + background
+
+    background = np.zeros_like(img)
+    foreground = mask * img
+    background = (1 - mask) * background
+    return foreground + background 
 
 def plot_single_image(img: np.array or str, load: bool = False, axis: int = 3) -> None:
     if load:
@@ -225,6 +228,8 @@ def plot_single_image(img: np.array or str, load: bool = False, axis: int = 3) -
 
     interact(explore_3dimage, depth=(0, img.shape[axis-1] - 1))
 
+    plt.show()
+
 def plot_multiple_images(images: list, load: bool = False, labels: list = ["MRI - Skull Layers", "Skull Stripped Brain Layers", "Mask Layers"], axis: int = 1) -> None:
     if load:
         for i in range(len (images)):
@@ -244,3 +249,5 @@ def plot_multiple_images(images: list, load: bool = False, labels: list = ["MRI 
             plt.axis('off')
 
     interact(explore_3dimage, depth=(0, images[0].shape[axis-1] - 1))
+
+    plt.show()

@@ -4,6 +4,7 @@ import torchio as tio
 import torch as th
 from tqdm import tqdm
 from lib.utils import *
+import matplotlib.pyplot as plt
 
 def train(train_loader, valid_loader, model, optimizer, criterion, epochs, device, scheduler=None, experiment=None, checkpoint=True, verbose=320, model_path='models/residual_unet'):
     model.train()
@@ -85,7 +86,7 @@ def train(train_loader, valid_loader, model, optimizer, criterion, epochs, devic
     # print training summary
     print("\nTraining Duration {:.2f} minutes".format(end_time/60))
     print("GPU memory used : {} kb".format(th.cuda.memory_allocated()))
-    print("GPU memory cached : {} kb".format(th.cuda.memory_cached()))
+    print("GPU memory cached : {} kb".format(th.cuda.memory_reserved()))
 
     return train_loss, test_loss
 
@@ -109,7 +110,7 @@ def evaluate(test_loader, model, criterion, device):
 
     return th.mean(th.tensor(test_loss)), th.mean(th.tensor(dice_score)), th.mean(th.tensor(iou_score))
 
-def infer(input_path, output_path, model, mode="patches", patch_size=64, overlap=16, batch_size=1, transforms=None, device="cuda", return_tensors=True):
+def infer(input_path, output_path, model, patch_size=64, overlap=16, batch_size=1, transforms=None, device="cuda", visualize=False, return_tensors=True):
     transforms = get_validation_transforms() if transforms is None else transforms
 
     subject = transforms(tio.Subject(mri=tio.ScalarImage(input_path)))
@@ -137,5 +138,10 @@ def infer(input_path, output_path, model, mode="patches", patch_size=64, overlap
     pred = tio.ScalarImage(tensor=th.tensor(mask_applied), affine=subject.mri.affine)
     pred.save(output_path)
 
+    if visualize:
+      pred = tio.Subject(mri = pred)
+      pred.plot()
+      plt.show()
+
     if return_tensors:
-        return pred.data
+        return subject.mri.data.numpy(), mask_applied, foreground.data.numpy()
