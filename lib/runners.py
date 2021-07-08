@@ -106,7 +106,38 @@ def evaluate(test_loader, model, criterion, device):
         dice_score.append(dice.item())
         iou_score.append(iou.item())
 
-    return th.tensor(th.mean(test_loss)), th.tensor(th.mean(dice_loss)), th.tensor(th.mean(iou_score))
+    return th.mean(th.tensor(test_loss)), th.mean(th.tensor(dice_score)), th.mean(th.tensor(iou_score))
 
-def infer():
-    pass
+def infer(input_path, output_path, model, mode="patches", patch_size=64, overlap=16, batch_size=1, transforms=None, device="cuda", return_tensors=True):
+    img = tio.ScalarImage("T1Img/sub-05/T1w MRI.nii")
+    subject = tio.Subject(mri=img)
+
+    transforms = get_validation_transforms() if transforms is None else transforms
+
+    subject = transforms(subject)
+
+    # sampler
+    grid_sampler = tio.inference.GridSampler(subject, patch_size, overlap)
+    # dataloader
+    patch_loader = th.utils.data.DataLoader(grid_sampler, batch_size=batch_size)
+    # aggregator
+    aggregator = tio.inference.GridAggregator(grid_sampler)
+
+    model.eval()
+    
+    for batch in patch_loader:
+        inputs = batch['mri'][tio.DATA].to(device)
+        locations = batch[tio.LOCATION].to(device)
+        probabilities = model(inputs)
+        aggregator.add_batch(probabilities, locations)
+    
+    foreground = aggregator.get_output_tensor()
+    affine = subject.mri.affine
+    prediction = tio.ScalarImage(tensor=foreground, affine=affine)
+
+    mask_applied = apply_binary_mask(subject.mri.data.numpy(), prediction.data.numpy())
+
+    pred = tio.ScalarImage(tensor=th.tensor(mask_applied), affine=affine)
+    pred.save(output_path)
+
+    return pred.data
