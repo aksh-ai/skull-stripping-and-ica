@@ -185,9 +185,10 @@ def dice_ratio(seg, gt):
 def apply_binary_mask(img: np.array or th.Tensor, mask: np.array or th.Tensor) -> np.array:
     if type(img) == th.Tensor and type(mask) == th.Tensor:
         img, mask = img.item(), mask.item()
-    res = img * mask
-    res = np.where(mask >= 0.5, img, mask)
-    return res
+    
+    foreground = np.where(mask >= 0.5, img, mask)
+    background = (1 - mask) * foreground
+    return foreground + background
 
 def plot_single_image(img: np.array or str, load: bool = False, axis: int = 3) -> None:
     if load:

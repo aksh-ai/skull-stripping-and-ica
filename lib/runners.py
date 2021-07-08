@@ -52,22 +52,23 @@ def train(train_loader, valid_loader, model, optimizer, criterion, epochs, devic
         
         model.eval()
 
-        for b, batch in enumerate(valid_loader):
-            X_test= batch['mri'][tio.DATA].data.to(device)
-            y_test = batch['brain'][tio.DATA].data.to(device)
+        with th.no_grad():
+            for b, batch in enumerate(valid_loader):
+                X_test= batch['mri'][tio.DATA].data.to(device)
+                y_test = batch['brain'][tio.DATA].data.to(device)
 
-            y_pred = model(X_test)
+                y_pred = model(X_test)
 
-            loss = criterion(y_pred, y_test)
+                loss = criterion(y_pred, y_test)
 
-            tv.append(loss.item())
+                tv.append(loss.item())
 
-            if (b + 1) % verbose == 0 or (b + 1) == 1 or (b + 1) == valid_data_len:
-                dice, iou = get_eval_metrics(y_pred=y_pred, y_true=y_test)
-                print(f"Validation - Batch [{b+1:6d}/{valid_data_len}] | Loss: {tv[-1]:.6f} | Dice Coefficient: {dice.item():.6f} | Jaccard (IoU) Score: {iou.item():.6f}")
+                if (b + 1) % verbose == 0 or (b + 1) == 1 or (b + 1) == valid_data_len:
+                    dice, iou = get_eval_metrics(y_pred=y_pred, y_true=y_test)
+                    print(f"Validation - Batch [{b+1:6d}/{valid_data_len}] | Loss: {tv[-1]:.6f} | Dice Coefficient: {dice.item():.6f} | Jaccard (IoU) Score: {iou.item():.6f}")
 
-                if experiment:
-                    experiment.add_scalar('validation_loss_in_steps', tv[-1], epoch * valid_data_len + b)
+                    if experiment:
+                        experiment.add_scalar('validation_loss_in_steps', tv[-1], epoch * valid_data_len + b)
         
         test_loss.append(th.mean(th.tensor(tv)))
         
@@ -109,12 +110,9 @@ def evaluate(test_loader, model, criterion, device):
     return th.mean(th.tensor(test_loss)), th.mean(th.tensor(dice_score)), th.mean(th.tensor(iou_score))
 
 def infer(input_path, output_path, model, mode="patches", patch_size=64, overlap=16, batch_size=1, transforms=None, device="cuda", return_tensors=True):
-    img = tio.ScalarImage("T1Img/sub-05/T1w MRI.nii")
-    subject = tio.Subject(mri=img)
-
     transforms = get_validation_transforms() if transforms is None else transforms
 
-    subject = transforms(subject)
+    subject = transforms(tio.Subject(mri=tio.ScalarImage(input_path)))
 
     # sampler
     grid_sampler = tio.inference.GridSampler(subject, patch_size, overlap)
@@ -125,19 +123,19 @@ def infer(input_path, output_path, model, mode="patches", patch_size=64, overlap
 
     model.eval()
     
-    for batch in patch_loader:
-        inputs = batch['mri'][tio.DATA].to(device)
-        locations = batch[tio.LOCATION].to(device)
-        probabilities = model(inputs)
-        aggregator.add_batch(probabilities, locations)
+    with th.no_grad():
+      for batch in patch_loader:
+          inputs = batch['mri'][tio.DATA].to(device)
+          locations = batch[tio.LOCATION]
+          probabilities = model(inputs)
+          aggregator.add_batch(probabilities, locations)
     
     foreground = aggregator.get_output_tensor()
-    affine = subject.mri.affine
-    prediction = tio.ScalarImage(tensor=foreground, affine=affine)
 
-    mask_applied = apply_binary_mask(subject.mri.data.numpy(), prediction.data.numpy())
+    mask_applied = apply_binary_mask(subject.mri.data.numpy(), foreground.data.numpy()) * subject.mri.data.numpy().std() + subject.mri.data.numpy().mean()
 
-    pred = tio.ScalarImage(tensor=th.tensor(mask_applied), affine=affine)
+    pred = tio.ScalarImage(tensor=th.tensor(mask_applied), affine=subject.mri.affine)
     pred.save(output_path)
 
-    return pred.data
+    if return_tensors:
+        return pred.data
