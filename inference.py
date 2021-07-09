@@ -42,7 +42,7 @@ if __name__ == '__main__':
         # set strict as false o load model weights without dataparallel module
         strict = False
 
-    # load the mdoel weights
+    # load the model weights
     model.load_state_dict(th.load(args.model_path, map_location=device), strict=strict)
     
     print(f"Loaded Residual UNET 3D Model on {device.upper()}")
