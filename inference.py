@@ -15,7 +15,7 @@ if __name__ == '__main__':
     parser.add_argument("-i", "--input", type=str, required=True, help="Input path for loading the skull-stripped brain image file. Ex: b1.nii.gz")
     parser.add_argument("-o", "--output", type=str, required=True, help="Output path for saving the skull-stripped brain image file. Ex: outputs/b1.nii.gz")
     parser.add_argument("-d", "--device", type=str, required=False, default=None, help="Device on which the model should run for inference. Ex: cuda:0, cuda:1, cuda, cpu")
-    parser.add_argument("-m", "--model_path", type=str, required=False, default="models/residual_unet3d_MSE.pth", help="Path to the model's weights dict. Ex: 'models/segmentation.pth'")
+    parser.add_argument("-m", "--model_path", type=str, required=False, default="models/residual_unet3d_MSE_2.pth", help="Path to the model's weights dict. Ex: 'models/segmentation.pth'")
     parser.add_argument("-p", "--patch_size", type=int, required=False, default=64, help="Size for generation of sub-volumes/patches from image. Ex: 32, 64, 128, etc")
     parser.add_argument("-l", "--overlap_size", type=int, required=False, default=16, help="Sub-volume image aggregation overlap size for stitching patch of images to a whole image. Ex: 4, 18, 16 (Cannot be greater than patch size)")
     parser.add_argument("-b", "--batch_size", type=int, required=False, default=1, help="Batch size for inference. Ex: 1, 2, 32, 64, etc")
