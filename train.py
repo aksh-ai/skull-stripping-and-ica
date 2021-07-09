@@ -1,6 +1,6 @@
 # Author: Akshay Kumaar M (aksh-ai)
 
-# Necesssary imports
+# Necessary imports
 import os
 import torch
 import random
