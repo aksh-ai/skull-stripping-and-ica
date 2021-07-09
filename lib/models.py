@@ -1,55 +1,85 @@
+# Author: Akshay Kumaar M (aksh-ai)
+
+# Necessary imports
 import torch as th
 import torch.nn as nn
 from lib.layers import *
 import torch.nn.functional as F
 
 class ResidualUNET3D(nn.Module):
-    def __init__(self, in_channels=1, out_channels=1, blocks=[64, 128, 256, 512], kernel_size=3, stride=2):
-        super().__init__()
+    def __init__(self, in_channels: int = 1, out_channels: int = 1, blocks: list or tuple = [64, 128, 256, 512], kernel_size: int or list or tuple = 3, stride: int or list or tuple = 2):
+        '''
+        Residualization based 3D segmentation architecture inspired by UNET
 
+        Args:
+          * in_channels: Input channels present in the image
+          * out_channels: Output channels for the segmented image
+          * blocks: List of units containing size of residual blocks
+          * kernel_size: Kernel size to be sued for feature extraction
+          * stride: Stride size for skipping windows/pixels when applying the filter
+        
+        Returns:
+          * forward(x): Tensor containing segmented image's mask or classes
+        '''
+        super(ResidualUNET3D, self).__init__()
+
+        # initial convolution with norm and activation
         self.conv1_1 = nn.Conv3d(in_channels, blocks[0], kernel_size=kernel_size, stride=1, padding=1, bias=False)
         self.norm1 = nn.InstanceNorm3d(blocks[0])
         self.act1 = nn.LeakyReLU(0.2, inplace=True)
 
+        # second stage initial pointwise convolution (minimize parameters by skipping a residual op? norm and activation are applied in the beginning of every residual op)
         self.conv1_2 = nn.Conv3d(blocks[0], blocks[0], kernel_size=kernel_size, stride=1, padding=1, bias=False)
         self.conv1_short = nn.Conv3d(in_channels, blocks[0], kernel_size=1, stride=1, padding=0, bias=False)
 
+        # residual blocks for downsampling
         self.residual_block1 = ResidualBlock3D(blocks[0], blocks[1], kernel_size=kernel_size, stride=stride)
         self.residual_block2 = ResidualBlock3D(blocks[1], blocks[2], kernel_size=kernel_size, stride=stride)
         self.residual_block3 = ResidualBlock3D(blocks[2], blocks[3], kernel_size=kernel_size, stride=stride)
 
+        # upscaling blocks with residualization
         self.upscale_block1 = Upscale3D(blocks[3], blocks[2])
         self.upscale_block2 = Upscale3D(blocks[2], blocks[1])
         self.upscale_block3 = Upscale3D(blocks[1], blocks[0])
 
+        # output layer with sigmoid activation 
         self.out = nn.Conv3d(blocks[0], out_channels, kernel_size=1, padding=0, bias=False)
         self.act2 = nn.Sigmoid()
 
+        # apply xaiver weights init
         self.apply(initialize_weights)
 
     def forward(self, x):
+        # intial feature extraction
         res = self.conv1_1(x)
         res = self.norm1(res)
         res = self.act1(res)
         
+        # add residual to featurized tensor
         skip1 = x + res
 
+        # downsample based on residualization - 3 levels
         skip2 = self.residual_block1(skip1)
         skip3 = self.residual_block2(skip2)
         skip4 = self.residual_block3(skip3)
 
+        # upscale and add downsampled tensors at corresponding levels (3-1, 2-2, 1-3)
         up1 = self.upscale_block1(skip4, skip3)
         up2 = self.upscale_block2(up1, skip2)
         up3 = self.upscale_block3(up2, skip1)
         
+        # apply output conv with activation
         out = self.out(up3)
         out = self.act2(out)
 
         return out
 
-class DenseNet(nn.Module):
+class DenseNet3D(nn.Module):
     def __init__(self, in_channels=1, num_features=64, depth_kernel_size=7, depth_stride=1, blocks=[6, 12, 24, 16], growth_rate=32, normalization_size=4, dropout=0.1, num_classes=1, add_top=False):
-        super(DenseNet, self).__init__()
+        '''
+        DenseNet3D as backbone for the segmentation GAN
+        '''
+        super(DenseNet3D, self).__init__()
 
         self.conv1 = nn.Sequential(
             nn.Conv3d(in_channels, num_features, kernel_size=(depth_kernel_size, 7, 7), stride=(depth_stride, 2, 2), padding=(depth_kernel_size // 2, 3, 3), bias=False),
