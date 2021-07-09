@@ -1,3 +1,6 @@
+# Author: Akshay Kumaar M (aksh-ai)
+
+# Necessary imports
 import torch as th
 from torch.nn import Module
 
@@ -19,12 +22,12 @@ class IoULoss(Module):
         super(IoULoss, self).__init__()
 
     def forward(self, inputs, targets, smooth=1.0):
-        #flatten label and prediction tensors
+        # flatten label and prediction tensors
         inputs = inputs.view(-1)
         targets = targets.view(-1)
         
-        #intersection is equivalent to True Positive count
-        #union is the mutually inclusive area of all labels & predictions 
+        # intersection is equivalent to True Positive count
+        # union is the mutually inclusive area of all labels & predictions 
         intersection = (inputs * targets).sum()
         total = (inputs + targets).sum()
         union = total - intersection 
@@ -122,16 +125,16 @@ class StandardGANLoss(GANLoss):
 
         device = fake_samps.device
 
-        # predictions for real images and fake images separately :
+        # predictions for real images and fake images separately
         r_preds = self.dis(real_samps)
         f_preds = self.dis(fake_samps)
 
-        # calculate the real loss:
+        # calculate the real loss
         real_loss = self.criterion(
             th.squeeze(r_preds),
             th.ones(real_samps.shape[0]).to(device))
 
-        # calculate the fake loss:
+        # calculate the fake loss
         fake_loss = self.criterion(
             th.squeeze(f_preds),
             th.zeros(fake_samps.shape[0]).to(device))
@@ -147,6 +150,7 @@ class StandardGANLoss(GANLoss):
 class WGAN_GP_Loss(GANLoss):
     def __init__(self, dis, drift=0.001, use_gp=False):
         super().__init__(dis)
+
         self.drift = drift
         self.use_gp = use_gp
 
@@ -212,8 +216,7 @@ class RelativisticAverageHingeGANLoss(GANLoss):
         f_r_diff = f_preds - th.mean(r_preds)
 
         # return the loss
-        loss = (th.mean(th.nn.ReLU()(1 - r_f_diff))
-                + th.mean(th.nn.ReLU()(1 + f_r_diff)))
+        loss = (th.mean(th.nn.ReLU()(1 - r_f_diff)) + th.mean(th.nn.ReLU()(1 + f_r_diff)))
 
         return loss
 
@@ -229,5 +232,4 @@ class RelativisticAverageHingeGANLoss(GANLoss):
         f_r_diff = f_preds - th.mean(r_preds)
 
         # return the loss
-        return (th.mean(th.nn.ReLU()(1 + r_f_diff))
-                + th.mean(th.nn.ReLU()(1 - f_r_diff)))
+        return (th.mean(th.nn.ReLU()(1 + r_f_diff)) + th.mean(th.nn.ReLU()(1 - f_r_diff)))
