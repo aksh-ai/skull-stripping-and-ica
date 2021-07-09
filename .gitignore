@@ -16,3 +16,5 @@ __pycache__
 data
 data.zip
 r.py
+skull-stripping-train-logs
+config.keys
