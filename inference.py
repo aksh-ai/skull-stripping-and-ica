@@ -1,6 +1,6 @@
 # Author: Akshay Kumaar M (aksh-ai)
 
-# Necesssary imports
+# Necessary imports
 import argparse
 import torch as th
 import torchio as tio
