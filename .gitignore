@@ -18,3 +18,12 @@ data.zip
 r.py
 skull-stripping-train-logs
 config.keys
+dmn_viz
+cache
+skull_stripping_logs - resUNET3d mse 2-20210710T163108Z-001.zip
+skull_stripping_logs - resUNET3d mse 2-20210710T163108Z-001
+skull_stripping_logs - resUNET3d mse 2
+dmn_ica.ipynb
+dmn_ica-bg.ipynb
+ica_exp.ipynb
+ica.ipynb
