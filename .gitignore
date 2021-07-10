@@ -12,7 +12,6 @@ bc.py
 *.nii.gz
 __pycache__
 .ipynb_checkpoints
-/*.png
 data
 data.zip
 r.py
@@ -27,3 +26,5 @@ dmn_ica.ipynb
 dmn_ica-bg.ipynb
 ica_exp.ipynb
 ica.ipynb
+training_loss_progress.png
+predicted.png
