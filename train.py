@@ -153,7 +153,7 @@ def run_training(args):
     print("\nStarted training...")
 
     # train the model
-    train_loss, valid_loss = train(train_loader, valid_loader, model.to(device), optimizer, criterion.to(device), epochs, device, scheduler=scheduler, verbose=args.verbose, checkpoint=args.ckpt, model_path=os.path.join(model_dir, args.model_name))
+    train_loss, valid_loss = train(train_loader, valid_loader, model.to(device), optimizer, criterion.to(device), epochs, device, scheduler=scheduler, experiment=tensorboard, verbose=args.verbose, checkpoint=args.ckpt, model_path=os.path.join(model_dir, args.model_name))
 
     # Visualize the loss progress post training the model
     plt.plot(train_loss, label='Training Loss')
