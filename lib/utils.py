@@ -370,7 +370,7 @@ def plot_single_image(img: np.array or str, load: bool = False, axis: int = 3) -
             plt.title("Sagittal View")
             plt.axis('off')
 
-    interact(explore_3dimage, depth=(0, img.shape[axis-1] - 1))
+    interact(explore_3dimage, depth=(0, img.shape[axis-1] - 1 if axis!=0 else img.shape[axis] - 1))
 
     plt.show()
 
