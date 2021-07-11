@@ -43,6 +43,7 @@ class ResidualUNET3D(nn.Module):
         self.upscale_block3 = Upscale3D(blocks[1], blocks[0])
 
         # output layer with sigmoid activation 
+        # output 2 channels for foreground, background, N channels for class based segmentation, and 1 for mask
         self.out = nn.Conv3d(blocks[0], out_channels, kernel_size=1, padding=0, bias=False)
         self.act2 = nn.Sigmoid()
 
@@ -77,7 +78,7 @@ class ResidualUNET3D(nn.Module):
 class DenseNet3D(nn.Module):
     def __init__(self, in_channels=1, num_features=64, depth_kernel_size=7, depth_stride=1, blocks=[6, 12, 24, 16], growth_rate=32, normalization_size=4, dropout=0.1, num_classes=1, add_top=False):
         '''
-        DenseNet3D as backbone for the segmentation GAN
+        DenseNet3D as backbone for the custom segmentation GAN
         '''
         super(DenseNet3D, self).__init__()
 
