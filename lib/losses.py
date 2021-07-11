@@ -8,13 +8,17 @@ class DiceLoss(Module):
     def init(self):
         super(DiceLoss, self).init()
     
-    def forward(self, inputs, targets, smooth=1.0):       
+    def forward(self, inputs, targets, smooth=1.0):
+        # flatten the tensors
         inputs = inputs.view(-1)
         targets = targets.view(-1)
         
-        intersection = (inputs * targets).sum()                            
-        dice = (2. * intersection + smooth)/(inputs.sum() + targets.sum() + smooth)  
+        # calculate intersection
+        intersection = (inputs * targets).sum()
+        # calculate dice coeff
+        dice = (2. * intersection + smooth)/(inputs.sum() + targets.sum() + smooth)
         
+        # return loss
         return 1 - dice
 
 class IoULoss(Module):
@@ -22,18 +26,19 @@ class IoULoss(Module):
         super(IoULoss, self).__init__()
 
     def forward(self, inputs, targets, smooth=1.0):
-        # flatten label and prediction tensors
+        # flatten the tensors
         inputs = inputs.view(-1)
         targets = targets.view(-1)
         
-        # intersection is equivalent to True Positive count
-        # union is the mutually inclusive area of all labels & predictions 
+        # calculate intersection, total and union
         intersection = (inputs * targets).sum()
         total = (inputs + targets).sum()
         union = total - intersection 
         
+        # caclulate iou score
         iou = (intersection + smooth)/(union + smooth)
                 
+        # return loss
         return 1 - iou
 
 class StandardSegmentationLoss(Module):
