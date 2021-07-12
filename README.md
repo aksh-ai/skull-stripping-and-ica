@@ -143,8 +143,6 @@ This architecture is a success because of 4 reasons:
 * **Same Level Skips -** The tensors from downsampling and upsampling layers from the same level are concatenated and processed inorder to get better performance at segmentation (inspired from UNET)
 * **Instance Normalization -** Normalization is done for each sample in the batch spatially and independently
 
-Instantiate the model and set parallization for multi-gpu training (if available)
-
 ## Library Modules, Scripts, & Notebooks
 
 ## Results
