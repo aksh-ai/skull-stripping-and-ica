@@ -126,7 +126,7 @@ Refer `inference.ipynb` notebook for the inference running the inference on inte
 The following script can be used to perform Canonical ICA for resting state MRI images to decompose the rs-fMRI scans into different componenets/networks of the brain. 
 
 ```
-python ica.py -i 'INPUT_PATH -o OUTPUT_PATH -n NUM_COMPONENTS -v VERBOSE -vis VISUALIZE -m MEMORY_LEVEL
+python ica.py -i INPUT_PATH -o OUTPUT_PATH -n NUM_COMPONENTS -v VERBOSE -vis VISUALIZE -m MEMORY_LEVEL
 ```
 
 Example:
