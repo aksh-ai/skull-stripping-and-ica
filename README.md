@@ -181,6 +181,9 @@ The skull-stripped images for the T1 Weighted MRI test set and the Canonical ICA
 
 ![MSE loss](images/skull_stripping_training_loss_progress_MSE_2.png)
 
+Blue - Training Loss
+Orange - Validation Loss
+
 * Metrics
 
 | MSE Loss | Dice Score |  IoU Score |
