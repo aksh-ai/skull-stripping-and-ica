@@ -44,6 +44,7 @@ if __name__ == '__main__':
     parser.add_argument("-vis", "--visualize", type=bool, required=False, default=True, help="Whether to display the atlas map of the components image or not")
     parser.add_argument("-m", "--memory_level", type=int, required=False, default=2, help="Memory usage value")
 
+    # parse args and compute ica
     rsfmri_ica(parser.parse_args())
     
     exit()
