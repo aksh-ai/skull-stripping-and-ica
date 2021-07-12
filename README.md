@@ -150,13 +150,6 @@ The architecture basically consists of two important blocks:
 
 ![Upscaling Block](images/upscale_block.png)
 
-This architecture is a success because of 4 reasons:
-
-* **Residualization -** Adding source tensor and feature extracted tensor will preserve the features from both source as well as extracted features. In this case, even if the feature extraction is bad in the current layer, residualization allows the next layer to learn features better without subsequential degradation of the network during forward and backward propagation (inspired from ResNet)
-* **Optional Skip -** In the network, there is an optional skip connection in the beginning before applying the residual blocks. This can be done or not done based on the complexity of the image as well as inital performance of the model
-* **Same Level Skips -** The tensors from downsampling and upsampling layers from the same level are concatenated and processed inorder to get better performance at segmentation (inspired from UNET)
-* **Instance Normalization -** Normalization is done for each sample in the batch spatially and independently
-
 ## Library Modules & Notebooks
 
 The `lib` library contains the following modules which is reusable and enables to implement the required fucntionalities for teh skull-stripping in just a few lines of code.
