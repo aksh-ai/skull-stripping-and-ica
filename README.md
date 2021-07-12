@@ -182,6 +182,8 @@ The notebooks contain the data exploration, data pipeline description, training,
 
 ## Results
 
+The skull-stripped images for the T1 Weighted MRI test set and the Canonical ICA components image (probability atlas) for the rs-fMRI image is available at this [google drive link](https://drive.google.com/drive/folders/1hZQhQVvt0Rvz9uE3PddkBhKikky6j0Ml?usp=sharing)
+
 * Skull-stripping MSE Loss progress
 
 ![MSE loss](images/skull_stripping_training_loss_progress_MSE_2.png)
