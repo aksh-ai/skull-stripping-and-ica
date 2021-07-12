@@ -1,6 +1,6 @@
 # Skull Stripping & ICA
 
-This repository contains the end-to-end pipeline for skull-stripping of T1 Weighted MRI images and Canonical ICA of resting state fMRI to achieve the Default Mode Network (DMN) of the brain.
+This repository contains the end-to-end pipeline for skull-stripping of T1 Weighted MRI images and Canonical ICA of resting state fMRI (rs-fMRI) to achieve the Default Mode Network (DMN) of the brain.
 
 ## Setup
 
@@ -71,35 +71,35 @@ Refer `data_exp.ipynb` to run the same but in an interactive manner.
 The  `train.py` script can be used to train and evaluate the skull-stripping Residual UNET 3D model
 
 ```
-python train.py 
-       -i IMAGES_DIR       
-       -l MASK_DIR         
-       -m MODEL_DIR        
-       -ic INPUT_CHANNELS  
-       -oc OUTPUT_CHANNELS 
-       -d DEVICE
-       -mn MODEL_NAME
-       -p PATCH_SIZE
-       -b BATCH_SIZE
-       -hl HISTOGRAM_LANDMARKS
-       -e EPOCHS
-       -ls LOSS
-       -opt OPTIMIZER
-       -lr LEARNING_RATE
-       -s SCHEDULER
-       -t TEST_SIZE
-       -tb TENSORBOARD
-       -c CHECKPOINT
-       -log TENSOBOARD_LOG_DIR
-       -v VERBOSE
-       -mp MODEL_CHECKPOINT_PATH
+python train.py \
+      -i IMAGES_DIR \    
+      -l MASK_DIR \     
+      -m MODEL_DIR \       
+      -ic INPUT_CHANNELS \
+      -oc OUTPUT_CHANNELS \
+      -d DEVICE \
+      -mn MODEL_NAME \
+      -p PATCH_SIZE \
+      -b BATCH_SIZE \
+      -hl HISTOGRAM_LANDMARKS \
+      -e EPOCHS \
+      -ls LOSS \
+      -opt OPTIMIZER \
+      -lr LEARNING_RATE \
+      -s SCHEDULER \
+      -t TEST_SIZE \
+      -tb TENSORBOARD \
+      -c CHECKPOINT \
+      -log TENSOBOARD_LOG_DIR \
+      -v VERBOSE \
+      -mp MODEL_CHECKPOINT_PATH 
 ```
 
 Example:
 
 ```
-python train.py -i 'data/images' -l 'data/targets' -m 'models' -ic 1 -oc 1 -d 'cuda' \\
-      -mn 'res_unet_3d' -p 64 -b 6 -hl 'NFBS_histogram_landmarks.npy' -e 6 -ls 'MSE' \\
+python train.py -i 'data/images' -l 'data/targets' -m 'models' -ic 1 -oc 1 -d 'cuda' \
+      -mn 'res_unet_3d' -p 64 -b 6 -hl 'NFBS_histogram_landmarks.npy' -e 6 -ls 'MSE' \
       -opt 'Adam' -s True -t 0.2 -tb True -c True -log 'ss_trianing_logs' -v 400
 ```
 
@@ -118,7 +118,17 @@ python inference.py -i 'T1Img\sub-02\anat_img.nii.gz' -o 'sub-02-anat-img-skull-
 
 ### Canonical ICA
 
-#### Inference
+The following script can be used to perform Canonical ICA for resting state MRI images to decompose the rs-fMRI scans into different componenets/networks of the brain. 
+
+```
+python ica.py -i 'INPUT_PATH -o OUTPUT_PATH -n NUM_COMPONENTS -v VERBOSE -vis VISUALIZE -m MEMORY_LEVEL
+```
+
+Example:
+
+```
+python ica.py -i 'Filtered_4DVolume.nii' -o 'ica_components.nii' -n 20 -v 10 -vis True -m 2
+```
 
 ## Model Architecture
 
@@ -138,7 +148,7 @@ The architecture basically consists of two important blocks:
 
 This architecture is a success because of 4 reasons:
 
-* **Residualization -** Residualization is the process of adding source tensor and feature extracted tensor to preserve the features from both source as well as extracted features. In this case, even if the feature extraction is bad in the current layer, residualization allows the next layer to learn features better without subsequential degradation of the network during forward and backward propagation (inspired from ResNet)
+* **Residualization -** Adding source tensor and feature extracted tensor will preserve the features from both source as well as extracted features. In this case, even if the feature extraction is bad in the current layer, residualization allows the next layer to learn features better without subsequential degradation of the network during forward and backward propagation (inspired from ResNet)
 * **Optional Skip -** In the network, there is an optional skip connection in the beginning before applying the residual blocks. This can be done or not done based on the complexity of the image as well as inital performance of the model
 * **Same Level Skips -** The tensors from downsampling and upsampling layers from the same level are concatenated and processed inorder to get better performance at segmentation (inspired from UNET)
 * **Instance Normalization -** Normalization is done for each sample in the batch spatially and independently
@@ -153,11 +163,33 @@ This architecture is a success because of 4 reasons:
 
 * Metrics
 
-| MSE Loss | Dice Score | IoU Score  |
+| MSE Loss | Dice Score |  IoU Score |
 |----------|------------|------------|
 | 0.008068 |   91.76 %  |   87.53 %  |
 
 ## References
+
+### Papers
+
+* [Deep Residual Learning for Image Recognition](https://arxiv.org/abs/1512.03385.pdf)
+* [U-Net: Convolutional Networks for Biomedical Image Segmentation](https://arxiv.org/pdf/1505.04597.pdf)
+* [DoubleU-Net: A Deep Convolutional Neural Network for Medical Image Segmentation](https://arxiv.org/pdf/2006.04868v2.pdf)
+* [Vox2Vox: 3D-GAN for Brain Tumour Segmentation](https://arxiv.org/abs/2003.13653.pdf)
+* [An automated method for identifying an independent component analysis-based language-related resting-state network in brain tumor subjects for surgical planning](https://www.nature.com/articles/s41598-017-14248-5)
+* [Age and Alzheimer’s pathology disrupt default mode network functioning via alterations in white matter microstructure but not hyperintensities](https://www.researchgate.net/publication/324606899_Age_and_Alzheimer's_pathology_disrupt_default_mode_network_functioning_via_alterations_in_white_matter_microstructure_but_not_hyperintensities)
+
+### Libraries
+
+* [PyTorch](https://www.pytorch.org)
+* [Nibabel](https://nipy.org/nibabel/reference/nibabel.html)
+* [NiPype](https://nipype.readthedocs.io/en/latest/)
+* [NiLearn](https://nilearn.github.io/index.html)
+* [Scikit-Learn](https://scikit-learn.org/)
+* [Numpy](https://numpy.org)
+* [TorchIO](https://torchio.readthedocs.io/)
+* [Matplotlib](https://matplotlib.org/)
+
+### TorchIO citation
 
 ```
 @article{perez-garcia_torchio_2021,
@@ -172,5 +204,3 @@ This architecture is a success because of 4 reasons:
    keywords = {Medical image computing, Deep learning, Data augmentation, Preprocessing},
 }
 ```
-
-## About
