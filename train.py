@@ -100,7 +100,7 @@ def run_training(args):
     print("Prepared dataset for training and validation.")
 
     # instantiate the model
-    model = ResidualUNET3D(in_channels=args.input_channels, out_channels=args.output_channels)
+    model = ResidualUNET3D(in_channels=args.input_channels, out_channels=args.output_channels, optional_skip=args.skip)
 
     # set parralelization based on the device
     if "cuda" in device:
@@ -189,6 +189,7 @@ if __name__ == '__main__':
     parser.add_argument("-e", "--epochs", type=int, required=False, default=5, help="Number of times to run the training loop")
     parser.add_argument("-ls", "--loss", type=str, required=False, default='MSE', help="Loss function. Choose one from: MSE, L1, smooth_L1, BCE, BCE_logits, dice, iou")
     parser.add_argument("-opt", "--optim", type=str, required=False, default='Adam', help="Optimization methods. Choose one from: Adam, RMSprop, SGD")
+    parser.add_argument("-sk", "--skip", type=bool, required=False, default=True, help="Whether to use the optional skip connection or not")
     parser.add_argument("-lr", "--lr", type=float, required=False, default=1e-3, help="Learning rate")
     parser.add_argument("-s", "--scheduler", type=bool, required=False, default=True, help="To use lr scheduler for training")
     parser.add_argument("-t", "--test_size", type=float, required=False, default=0.2, help="Train Test split percentage as a float value")
