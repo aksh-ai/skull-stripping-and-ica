@@ -40,7 +40,7 @@ if __name__ == '__main__':
     parser.add_argument("-i", "--input_path", type=str, required=True, help="Input path to the rs-fMRI image")
     parser.add_argument("-o", "--output_path", type=str, required=True, help="Output path to save the CanICA components image")
     parser.add_argument("-n", "--n_components", type=int, required=False, default=20, help="Number of components to perform CanICA")
-    parser.add_argument("-v", "--verbose", type=int, required=False, default=10, help="Prints stats based on verbose value")
+    parser.add_argument("-v", "--verbose", type=int, required=False, default=0, help="Prints stats based on verbose value")
     parser.add_argument("-vis", "--visualize", type=bool, required=False, default=True, help="Whether to display the atlas map of the components image or not")
     parser.add_argument("-m", "--memory_level", type=int, required=False, default=2, help="Memory usage value")
 
