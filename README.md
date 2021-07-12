@@ -151,7 +151,7 @@ Instantiate the model and set parallization for multi-gpu training (if available
 
 * Skull-stripping MSE Loss progress
 
-![MSE loss](images\skull_stripping_training_loss_progress_MSE_2.png)
+![MSE loss](images/skull_stripping_training_loss_progress_MSE_2.png)
 
 * Metrics
 
