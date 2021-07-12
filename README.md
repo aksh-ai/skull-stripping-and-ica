@@ -87,6 +87,7 @@ python train.py \
       -opt OPTIMIZER \
       -lr LEARNING_RATE \
       -s SCHEDULER \
+      -sk OPTIONAL_SKIP \
       -t TEST_SIZE \
       -tb TENSORBOARD \
       -c CHECKPOINT \
@@ -100,7 +101,7 @@ Example:
 ```
 python train.py -i 'data/images' -l 'data/targets' -m 'models' -ic 1 -oc 1 -d 'cuda' \
       -mn 'res_unet_3d' -p 64 -b 6 -hl 'NFBS_histogram_landmarks.npy' -e 6 -ls 'MSE' \
-      -opt 'Adam' -s True -t 0.2 -tb True -c True -log 'ss_trianing_logs' -v 400
+      -opt 'Adam' -s True -sk True -t 0.2 -tb True -c True -log 'ss_trianing_logs' -v 400
 ```
 
 Refer `skull_stripping_training_MSE.ipynb` notebook which was run on Google Colab for the training and evaluation of the model
@@ -110,7 +111,7 @@ Refer `skull_stripping_training_MSE.ipynb` notebook which was run on Google Cola
 The `inference.py` script can be used to run inference on a new T1 Weighted MRI Image which outputs and saves the skull-stripped image. The model used for this is `residual_unet3d_MSE_2.pth` present under the `models` directory
 
 ```
-python inference.py -i INPUT_IMAGE -o OUTPUT_IMAGE_NAME -d DEVICE -m MODEL_PATH -p PATCH_SIZE -l OVERLAP_SIZE -b BATCH_SIZE -v VISUALIZE
+python inference.py -i INPUT_IMAGE -o OUTPUT_IMAGE_NAME -d DEVICE -m MODEL_PATH -p PATCH_SIZE -l OVERLAP_SIZE -b BATCH_SIZE -v VISUALIZE -s OPTIONAL_SKIP
 ```
 
 Example:
