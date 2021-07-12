@@ -7,7 +7,7 @@ from lib.layers import *
 import torch.nn.functional as F
 
 class ResidualUNET3D(nn.Module):
-    def __init__(self, in_channels: int = 1, out_channels: int = 1, blocks: list or tuple = [64, 128, 256, 512], kernel_size: int or list or tuple = 3, stride: int or list or tuple = 2):
+    def __init__(self, in_channels: int = 1, out_channels: int = 1, blocks: list or tuple = [64, 128, 256, 512], kernel_size: int or list or tuple = 3, stride: int or list or tuple = 2, optional_skip: bool = False):
         '''
         Residualization based 3D segmentation architecture inspired by UNET
 
@@ -29,6 +29,7 @@ class ResidualUNET3D(nn.Module):
         self.act1 = nn.LeakyReLU(0.2, inplace=True)
 
         # second stage initial pointwise convolution (minimize parameters by skipping a residual op? norm and activation are applied in the beginning of every residual op)
+        self.optional_skip = optional_skip
         self.conv1_2 = nn.Conv3d(blocks[0], blocks[0], kernel_size=kernel_size, stride=1, padding=1, bias=False)
         self.conv1_short = nn.Conv3d(in_channels, blocks[0], kernel_size=1, stride=1, padding=0, bias=False)
 
@@ -57,7 +58,10 @@ class ResidualUNET3D(nn.Module):
         res = self.act1(res)
         
         # add residual to featurized tensor
-        skip1 = x + res
+        if self.optional_skip:
+            skip1 = self.conv1_2(res) + self.conv1_short(x)
+        else:
+            skip1 = x + res
 
         # downsample based on residualization - 3 levels
         skip2 = self.residual_block1(skip1)
