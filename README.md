@@ -44,7 +44,7 @@ Install the required libraries using the following command
 
 ## Usage
 
-There are several scripts available in the repository that can be used to train and run inference for skull-stripping and canonical ICA
+There are several scripts available in the repository that can be used to train and run inference for skull-stripping and canonical ICA. The parameters given in examples for the scripts were the parameters used for training, evaluation, and testing of the models to achieve the required results.
 
 ### Skull-Stripping
 
@@ -103,6 +103,8 @@ python train.py -i 'data/images' -l 'data/targets' -m 'models' -ic 1 -oc 1 -d 'c
       -opt 'Adam' -s True -t 0.2 -tb True -c True -log 'ss_trianing_logs' -v 400
 ```
 
+Refer `skull_stripping_training_MSE.ipynb` notebook which was run on Google Colab for the training and evaluation of the model
+
 #### Inference
 
 The `inference.py` script can be used to run inference on a new T1 Weighted MRI Image which outputs and saves the skull-stripped image. The model used for this is `residual_unet3d_MSE_2.pth` present under the `models` directory
@@ -115,6 +117,8 @@ Example:
 ```
 python inference.py -i 'T1Img\sub-02\anat_img.nii.gz' -o 'sub-02-anat-img-skull-stripped.nii.gz' -d 'cuda' -m 'models\residual_unet3d_MSE_2.pth' -p 64 -l 16 -b 1 -v True
 ```
+
+Refer `inference.ipynb` notebook for the inference running the inference on interactive python notebooks
 
 ### Canonical ICA
 
@@ -153,7 +157,28 @@ This architecture is a success because of 4 reasons:
 * **Same Level Skips -** The tensors from downsampling and upsampling layers from the same level are concatenated and processed inorder to get better performance at segmentation (inspired from UNET)
 * **Instance Normalization -** Normalization is done for each sample in the batch spatially and independently
 
-## Library Modules, Scripts, & Notebooks
+## Library Modules & Notebooks
+
+The `lib` library contains the following modules which is reusable and enables to implement the required fucntionalities for teh skull-stripping in just a few lines of code.
+
+### Modules
+
+* **data -** Requires the functions to load the NFBS datasets as whoel iamges and sub-volumes
+* **layers -** Contains the neural network layers required for implementing the neural network architectures
+* **losses -** Contains a collection of loss functions that can be used for image segmentation, generative adversarial networks, and variational autoencoders
+* **models -** Contains the Residual UNET 3D image segmentation architecture
+* **runners -** Contains the functions for training, evaluation, and inference
+* **utils -** Contains functions related data preparation, image visualization, preporcessing, augmentations, and segmetation operations
+
+### Notebooks
+
+The notebooks contain the data exploration, data pipeline description, training, evaluation, and testing of the models
+
+* **data_exp.ipynb -** This notebook contains the meta data csv preparation of the NFBS dataset for data preparation
+* **data_exploration_playground.ipynb -** This notebook contains the data exploration of MRI images by visualizing them
+* **data_pipeline_testing.ipynb -** This notebook contains the different data pipeline's (whole and sub-volumes) usages using the `data` module from `lib`
+* **skull_stripping_training_MSE.ipynb -** This notebook contains the training, evaluation, and performance on the test set using the Residual UNET 3D for skull-stripping
+* **inference.ipynb -** This notebook contains the inference pipeline in notebook format using the `inference.py` script
 
 ## Results
 
@@ -188,19 +213,3 @@ This architecture is a success because of 4 reasons:
 * [Numpy](https://numpy.org)
 * [TorchIO](https://torchio.readthedocs.io/)
 * [Matplotlib](https://matplotlib.org/)
-
-### TorchIO citation
-
-```
-@article{perez-garcia_torchio_2021,
-   title = {TorchIO: a Python library for efficient loading, preprocessing, augmentation and patch-based sampling of medical images in deep learning},
-   journal = {Computer Methods and Programs in Biomedicine},
-   pages = {106236},
-   year = {2021},
-   issn = {0169-2607},
-   doi = {https://doi.org/10.1016/j.cmpb.2021.106236},
-   url = {https://www.sciencedirect.com/science/article/pii/S0169260721003102},
-   author = {P{\'e}rez-Garc{\'i}a, Fernando and Sparks, Rachel and Ourselin, S{\'e}bastien},
-   keywords = {Medical image computing, Deep learning, Data augmentation, Preprocessing},
-}
-```
