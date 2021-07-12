@@ -40,7 +40,7 @@ To deactivate the virtual environment
 
 Install the required libraries using the following command
 
-`pip install -r requirements.txt`
+`pip install -r --upgrade requirements.txt`
 
 ## Usage
 
@@ -177,6 +177,10 @@ The notebooks contain the data exploration, data pipeline description, training,
 
 The skull-stripped images for the T1 Weighted MRI test set and the Canonical ICA components image (probability atlas) for the rs-fMRI image is available at this [google drive link](https://drive.google.com/drive/folders/1hZQhQVvt0Rvz9uE3PddkBhKikky6j0Ml?usp=sharing)
 
+* Skull-stripping on test image
+
+![Skull-stripped image](images/result1.png)
+
 * Skull-stripping MSE Loss progress
 
 ![MSE loss](images/skull_stripping_training_loss_progress_MSE_2.png)
@@ -189,6 +193,10 @@ Orange - Validation Loss
 | MSE Loss | Dice Score |  IoU Score |
 |----------|------------|------------|
 | 0.008068 |   91.76 %  |   87.53 %  |
+
+* Canonical ICA components image
+
+![ICA Components](images/ica_components_atlas.png)
 
 ## References
 
