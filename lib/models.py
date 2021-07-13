@@ -28,8 +28,9 @@ class ResidualUNET3D(nn.Module):
         self.norm1 = nn.InstanceNorm3d(blocks[0])
         self.act1 = nn.LeakyReLU(0.2, inplace=True)
 
-        # second stage initial pointwise convolution (minimize parameters by skipping a residual op? norm and activation are applied in the beginning of every residual op)
+        # second stage initial pointwise convolution - optional skip (minimize parameters by skipping a residual op? norm and activation are applied in the beginning of every residual op)
         self.optional_skip = optional_skip
+        
         self.conv1_2 = nn.Conv3d(blocks[0], blocks[0], kernel_size=kernel_size, stride=1, padding=1, bias=False)
         self.conv1_short = nn.Conv3d(in_channels, blocks[0], kernel_size=1, stride=1, padding=0, bias=False)
 
