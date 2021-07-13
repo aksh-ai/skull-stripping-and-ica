@@ -101,7 +101,7 @@ Example:
 ```
 python train.py -i 'data/images' -l 'data/targets' -m 'models' -ic 1 -oc 1 -d 'cuda' \
       -mn 'res_unet_3d' -p 64 -b 6 -hl 'NFBS_histogram_landmarks.npy' -e 6 -ls 'MSE' \
-      -opt 'Adam' -s True -sk True -t 0.2 -tb True -c True -log 'ss_trianing_logs' -v 400
+      -opt 'Adam' -s True -sk False -t 0.2 -tb True -c True -log 'ss_trianing_logs' -v 400
 ```
 
 Refer [skull_stripping_training_MSE.ipynb](skull_stripping_training_MSE.ipynb) notebook which was run on Google Colab for the training and evaluation of the model (without optional skip)
@@ -116,7 +116,7 @@ python inference.py -i INPUT_IMAGE -o OUTPUT_IMAGE_NAME -d DEVICE -m MODEL_PATH 
 
 Example:
 ```
-python inference.py -i 'T1Img\sub-02\anat_img.nii.gz' -o 'sub-02-anat-img-skull-stripped.nii.gz' -d 'cuda' -m 'models\residual_unet3d_MSE_2.pth' -p 64 -l 16 -b 1 -v True
+python inference.py -i 'T1Img\sub-02\anat_img.nii.gz' -o 'sub-02-anat-img-skull-stripped.nii.gz' -d 'cuda' -m 'models\residual_unet3d_MSE_2.pth' -p 64 -l 16 -b 1 -v True -s False
 ```
 
 Refer [inference.ipynb](inference.ipynb) notebook for the inference running the inference on interactive python notebooks
