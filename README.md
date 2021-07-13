@@ -153,7 +153,7 @@ The architecture basically consists of two important blocks:
 
 ## Library Modules & Notebooks
 
-The `lib` library contains the following modules which is reusable and enables to implement the required fucntionalities for teh skull-stripping in just a few lines of code.
+The `lib` library contains the following modules which is reusable and enables to implement the required fucntionalities for the skull-stripping in just a few lines of code.
 
 ### Modules
 
@@ -187,7 +187,7 @@ The skull-stripped images for the T1 Weighted MRI test set and the Canonical ICA
 
 ![MSE loss](images/skull_stripping_training_loss_progress_MSE_3.png)
 
-Blue - Training Loss<br>
+Blue - Training Loss <br>
 Orange - Validation Loss
 
 * Metrics
