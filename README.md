@@ -40,7 +40,7 @@ To deactivate the virtual environment
 
 Install the required libraries using the following command
 
-`pip install -r --upgrade requirements.txt`
+`pip install --upgrade -r requirements.txt`
 
 ## Usage
 
