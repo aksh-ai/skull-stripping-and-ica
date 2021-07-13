@@ -104,7 +104,7 @@ python train.py -i 'data/images' -l 'data/targets' -m 'models' -ic 1 -oc 1 -d 'c
       -opt 'Adam' -s True -sk True -t 0.2 -tb True -c True -log 'ss_trianing_logs' -v 400
 ```
 
-Refer `skull_stripping_training_MSE.ipynb` notebook which was run on Google Colab for the training and evaluation of the model
+Refer `skull_stripping_training_MSE.ipynb` notebook which was run on Google Colab for the training and evaluation of the model (without optional skip)
 
 #### Inference
 
@@ -171,7 +171,8 @@ The notebooks contain the data exploration, data pipeline description, training,
 * **data_exp.ipynb -** This notebook contains the meta data csv preparation of the NFBS dataset for data preparation
 * **data_exploration_playground.ipynb -** This notebook contains the data exploration of MRI images by visualizing them
 * **data_pipeline_testing.ipynb -** This notebook contains the different data pipeline's (whole and sub-volumes) usages using the `data` module from `lib`
-* **skull_stripping_training_MSE.ipynb -** This notebook contains the training, evaluation, and performance on the test set using the Residual UNET 3D for skull-stripping
+* **skull_stripping_training_MSE.ipynb -** This notebook contains the training, evaluation, and performance on the test set using the Residual UNET 3D for skull-stripping without the optional skip
+* **skull_stripping_training_MSE_3.ipynb -** This notebook contains the training, evaluation, and performance on the test set using the Residual UNET 3D for skull-stripping with the optional skip
 * **inference.ipynb -** This notebook contains the inference pipeline in notebook format using the `inference.py` script
 
 ## Results
@@ -184,16 +185,17 @@ The skull-stripped images for the T1 Weighted MRI test set and the Canonical ICA
 
 * Skull-stripping MSE Loss progress
 
-![MSE loss](images/skull_stripping_training_loss_progress_MSE_2.png)
+![MSE loss](images/skull_stripping_training_loss_progress_MSE_3.png)
 
 Blue - Training Loss<br>
 Orange - Validation Loss
 
 * Metrics
 
-| MSE Loss | Dice Score |  IoU Score |
-|----------|------------|------------|
-| 0.008068 |   91.76 %  |   87.53 %  |
+|            Model Name            | Optional Skip | MSE Loss | Dice Score |  IoU Score |
+|----------------------------------|---------------|----------|------------|------------|
+| models\residual_unet3d_MSE_2.pth |     False     | 0.008068 |   91.76 %  |   87.53 %  |
+| models\residual_unet3d_MSE_3.pth |     True      | 0.010058 |   91.13 %  |   86.11 %  |
 
 * Canonical ICA components image
 
