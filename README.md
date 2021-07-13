@@ -52,7 +52,7 @@ The following scripts can be used to train, and run inference for skull-strippin
 
 #### Data Preparation
 
-The data can be prepared in the required format using the `prepare_data.py` script. It takes the following arguments
+The data can be prepared in the required format using the [prepare_data.py](prepare_data.py) script. It takes the following arguments
 
 ```
 python prepare_data.py -r ROOT_DIR -o CSV_FILE_NAME -d OUTPUT_DIR
@@ -64,11 +64,11 @@ Example:
 python prepare_data.py -r 'NFBS_Dataset' -o 'NFBS_Dataset_meta.csv' -d 'data'
 ```
 
-Refer `data_exp.ipynb` to run the same but in an interactive manner.
+Refer [data_exp.ipynb](data_exp.ipynb) to run the same but in an interactive manner.
 
 #### Training & Evaluation
 
-The  `train.py` script can be used to train and evaluate the skull-stripping Residual UNET 3D model
+The  [train.py](train.py) script can be used to train and evaluate the skull-stripping Residual UNET 3D model
 
 ```
 python train.py \
@@ -104,11 +104,11 @@ python train.py -i 'data/images' -l 'data/targets' -m 'models' -ic 1 -oc 1 -d 'c
       -opt 'Adam' -s True -sk True -t 0.2 -tb True -c True -log 'ss_trianing_logs' -v 400
 ```
 
-Refer `skull_stripping_training_MSE.ipynb` notebook which was run on Google Colab for the training and evaluation of the model (without optional skip)
+Refer [skull_stripping_training_MSE.ipynb](skull_stripping_training_MSE.ipynb) notebook which was run on Google Colab for the training and evaluation of the model (without optional skip)
 
 #### Inference
 
-The `inference.py` script can be used to run inference on a new T1 Weighted MRI Image which outputs and saves the skull-stripped image. The model used for this is `residual_unet3d_MSE_2.pth` present under the `models` directory
+The [inference.py](inference.py) script can be used to run inference on a new T1 Weighted MRI Image which outputs and saves the skull-stripped image. The model used for this is `residual_unet3d_MSE_2.pth` present under the `models` directory
 
 ```
 python inference.py -i INPUT_IMAGE -o OUTPUT_IMAGE_NAME -d DEVICE -m MODEL_PATH -p PATCH_SIZE -l OVERLAP_SIZE -b BATCH_SIZE -v VISUALIZE -s OPTIONAL_SKIP
@@ -119,11 +119,11 @@ Example:
 python inference.py -i 'T1Img\sub-02\anat_img.nii.gz' -o 'sub-02-anat-img-skull-stripped.nii.gz' -d 'cuda' -m 'models\residual_unet3d_MSE_2.pth' -p 64 -l 16 -b 1 -v True
 ```
 
-Refer `inference.ipynb` notebook for the inference running the inference on interactive python notebooks
+Refer [inference.ipynb](inference.ipynb) notebook for the inference running the inference on interactive python notebooks
 
 ### Canonical ICA
 
-The following script can be used to perform Canonical ICA for resting state MRI images to decompose the rs-fMRI scans into different componenets/networks of the brain. 
+The [ica.py](ica.py) script can be used to perform Canonical ICA for resting state MRI images to decompose the rs-fMRI scans into different componenets/networks of the brain. 
 
 ```
 python ica.py -i INPUT_PATH -o OUTPUT_PATH -n NUM_COMPONENTS -v VERBOSE -vis VISUALIZE -m MEMORY_LEVEL
@@ -134,6 +134,8 @@ Example:
 ```
 python ica.py -i 'Filtered_4DVolume.nii' -o 'ica_components.nii' -n 20 -v 10 -vis True -m 2
 ```
+
+Refer [ica.ipynb](ica.ipynb) for the exploratory experiemntation of the ICA components of the rs-fMRI image to achieve Default Mode Network (DMN)
 
 ## Model Architecture
 
@@ -157,23 +159,24 @@ The `lib` library contains the following modules which is reusable and enables t
 
 ### Modules
 
-* **data -** Requires the functions to load the NFBS datasets as whoel iamges and sub-volumes
-* **layers -** Contains the neural network layers required for implementing the neural network architectures
-* **losses -** Contains a collection of loss functions that can be used for image segmentation, generative adversarial networks, and variational autoencoders
-* **models -** Contains the Residual UNET 3D image segmentation architecture
-* **runners -** Contains the functions for training, evaluation, and inference
-* **utils -** Contains functions related data preparation, image visualization, preporcessing, augmentations, and segmetation operations
+* [data](lib/data.py) - Requires the functions to load the NFBS datasets as whoel iamges and sub-volumes
+* [layers](lib/layers.py) - Contains the neural network layers required for implementing the neural network architectures
+* [losses](lib/losses.py) - Contains a collection of loss functions that can be used for image segmentation, generative adversarial networks, and variational autoencoders
+* [models](lib/models.py) - Contains the Residual UNET 3D image segmentation architecture
+* [runners](lib/runners.py) - Contains the functions for training, evaluation, and inference
+* [utils](lib/utils.py) - Contains functions related data preparation, image visualization, preporcessing, augmentations, and segmetation operations
 
 ### Notebooks
 
 The notebooks contain the data exploration, data pipeline description, training, evaluation, and testing of the models
 
-* **data_exp.ipynb -** This notebook contains the meta data csv preparation of the NFBS dataset for data preparation
-* **data_exploration_playground.ipynb -** This notebook contains the data exploration of MRI images by visualizing them
-* **data_pipeline_testing.ipynb -** This notebook contains the different data pipeline's (whole and sub-volumes) usages using the `data` module from `lib`
-* **skull_stripping_training_MSE.ipynb -** This notebook contains the training, evaluation, and performance on the test set using the Residual UNET 3D for skull-stripping without the optional skip
-* **skull_stripping_training_MSE_3.ipynb -** This notebook contains the training, evaluation, and performance on the test set using the Residual UNET 3D for skull-stripping with the optional skip
-* **inference.ipynb -** This notebook contains the inference pipeline in notebook format using the `inference.py` script
+* [data_exp.ipynb](data_exp.ipynb) - This notebook contains the meta data csv preparation of the NFBS dataset for data preparation
+* [data_exploration_playground.ipynb](data_exploration_playground.ipynb) - This notebook contains the data exploration of MRI images by visualizing them
+* [data_pipeline_testing.ipynb](data_pipeline_testing.ipynb) - This notebook contains the different data pipeline's (whole and sub-volumes) usages using the `data` module from `lib`
+* [skull_stripping_training_MSE.ipynb](skull_stripping_training_MSE.ipynb) - This notebook contains the training, evaluation, and performance on the test set using the Residual UNET 3D for skull-stripping without the optional skip
+* [skull_stripping_training_MSE_3.ipynb](skull_stripping_training_MSE_3.ipynb) - This notebook contains the training, evaluation, and performance on the test set using the Residual UNET 3D for skull-stripping with the optional skip
+* [inference.ipynb](inference.ipynb) - This notebook contains the inference pipeline in notebook format using the `inference.py` script
+* [ica.ipynb](ica.ipynb) - This nontebook contains the epxloratory expeimentation of ICA to achieve DMN
 
 ## Results
 
