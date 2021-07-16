@@ -11,6 +11,7 @@ import torchio as tio
 from scipy import stats
 from shutil import copyfile
 import matplotlib.pyplot as plt
+from collections import Tuple
 import torchvision.transforms as T
 import torchvision.transforms.functional as FT
 from torch.utils.tensorboard import SummaryWriter 
@@ -198,7 +199,7 @@ def jaccard_similarity(y_true: th.Tensor, y_pred: th.Tensor, smooth: float = 1.0
 
     return iou
 
-def get_eval_metrics(y_true: th.Tensor, y_pred: th.Tensor) -> (th.Tensor, th.Tensor):
+def get_eval_metrics(y_true: th.Tensor, y_pred: th.Tensor) -> Tuple[th.Tensor, th.Tensor]:
     '''
     Calculates dice coefficient and jaccard similarity scores
 

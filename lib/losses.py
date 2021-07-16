@@ -82,13 +82,13 @@ class VAELoss(Module):
 
         if loss_type == 'L1':
             self.loss = L1Loss() 
-        elif loss == 'smooth_L1':
+        elif loss_type == 'smooth_L1':
             self.loss = SmoothL1Loss()
-        elif loss == 'MSE':
+        elif loss_type == 'MSE':
             self.loss = MSELoss()
-        elif loss == 'BCE':
+        elif loss_type == 'BCE':
             self.loss = BCELoss()
-        elif loss == 'BCE_logits':
+        elif loss_type == 'BCE_logits':
             self.loss = BCEWithLogitsLoss()
         else:
             raise Exception("Invalid Loss function defined.")
